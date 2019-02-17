@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_commodity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.a50067.huanhuan.View.CommodityActivity">
+<include layout="@layout/toolbar_layout"/>
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+    <LinearLayout
+        android:id="@+id/comAC_userIcon_Llayout"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="10dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_weight="1">
+            <com.example.a50067.huanhuan.Utility.CircleImageView
+                android:id="@+id/comAC_user_icon"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@mipmap/personnal_default_icon"/>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            >
+
+            <TextView
+                android:id="@+id/comAC_user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center"
+                android:textSize="20sp"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <TextView
+                android:id="@+id/comAC_comDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+                android:textSize="20sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:layout_marginEnd="20dp"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:scaleType="centerInside"
+                android:src="@mipmap/commodity_money"
+                android:layout_gravity="start"
+                />
+
+            <TextView
+                android:id="@+id/comAC_com_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:textSize="25sp"
+                android:text="200"
+                android:textColor="@color/colorPrimary"/>
+        </LinearLayout>
+
+    </LinearLayout>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:orientation="vertical"
+    android:layout_gravity="center">
+    <LinearLayout
+        android:id="@+id/comAC_title_Llayout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/comAC_normal_height">
+    <TextView
+        android:id="@+id/comAC_comTitle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textSize="20sp"
+        android:background="@drawable/button_shape"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/comAC_comContent_LLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@+id/comAC_comDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLength="2000"
+            android:textSize="20sp"/>
+
+        <ImageView
+            android:id="@+id/comAC_comImage"
+            android:layout_width="match_parent"
+            android:layout_height="200dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/comAC_normal_height"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:gravity="center">
+        <TextView
+            android:id="@+id/comAC_user_school"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:id="@+id/comAC_exchangeable"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textSize="18sp"/>
+    </LinearLayout>
+</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/comAC_normal_height"
+        android:gravity="center_horizontal"
+        android:layout_margin="2dp"
+        >
+        <TextView
+            android:id="@+id/comAC_comment_Btn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:text="@string/comAC_comment_btn"
+            android:textSize="@dimen/comAC_Btn_text"
+            android:textColor="@color/EditTextHint"
+            />
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/EditTextHint"/>
+        <TextView
+            android:id="@+id/comAC_starCom_Btn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:text="@string/comAC_starCom_btn"
+            android:textSize="@dimen/comAC_Btn_text"
+            android:textColor="@color/EditTextHint"/>
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/EditTextHint"/>
+        <TextView
+            android:id="@+id/comAC_Iwant_Btn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:text="@string/comAC_Iwant_btn"
+            android:textSize="@dimen/comAC_Btn_text"
+            android:textColor="@color/EditTextHint"/>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/comAC_comment_LLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </ScrollView>
+    </LinearLayout>
+    </LinearLayout>
+</ScrollView>
+
+
+</LinearLayout>

@@ -1,0 +1,74 @@
+<resources>
+    <string name="app_name">换换</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_account">输入账号</string>
+    <string name="prompt_password">输入密码</string>
+    <string name="action_sign_in">登陆换换</string>
+    <string name="action_sign_in_short">登陆</string>
+    <string name="error_invalid_account">账号输入有误</string>
+    <string name="error_invalid_password">密码输入太短</string>
+    <string name="error_incorrect_password">密码输入错误</string>
+    <string name="error_field_required">未填写</string>
+    <string name="permission_rationale">"需要权限"</string>
+    <string name="welcome_words">欢迎来到换换</string>
+    <string name="login_failed">账号或密码错误，登录失败</string>
+    <string name="clear">清除</string>
+    <string name="mainac">首页</string>
+    <string name="category">分类</string>
+    <string name="chat">消息</string>
+    <string name="personnal">我的</string>
+    <string name="publish_com_success">发布成功</string>
+    <string name="personnal_comment">我的评论</string>
+    <string name="personnal_follows">我的关注</string>
+    <string name="personnal_fans">我的粉丝</string>
+    <string name="comAC_comment_btn">评论</string>
+    <string name="comAC_starCom_btn">收藏</string>
+    <string name="comAC_Iwant_btn">交易</string>
+    <string name="mainFrag_refresh_success">刷新成功</string>
+    <string name="mainFrag_refresh_failed">刷新失败</string>
+    <string name="choose_from_album">从相册选择一张图片</string>
+    <string name="choose_from_camera">拍摄一张图片</string>
+    <string name="personnal_publish">我的发布</string>
+    <string name="personnal_sold">我卖出的</string>
+    <string name="personnal_bought">我买到的</string>
+    <string name="personnal_setting">设置</string>
+    <string name="firstLogin_name">输入昵称</string>
+    <string name="firstLogin_tel">输入手机号</string>
+    <string name="firstLogin_School">输入学校</string>
+    <string name="firstLogin_btn">保存并登陆</string>
+    <string name="firstLogin_hint">昵称和密码请勿输入字符串！(昵称只允许设置一次)</string>
+    <string name="firstLogin_input_failed">输入有误，请重新检查输入是否正确，完整（无空格、特殊字符）!</string>
+    <string name="pubComIsEmpty">输入不能为空，请重新输入</string>
+    <string name="huanhuan_ad1">换换广告位1</string>
+    <string name="huanhuan_ad2">换换广告位2</string>
+    <string name="huanhuan_ad3">换换广告位3</string>
+    <string name="huanhuan_ad4">换换广告位4</string>
+    <string name="starCom">你收藏了该商品</string>
+    <string name="exchange">可换</string>
+    <string name="noexchange">不可换</string>
+    <string name="comAC">商品详情</string>
+    <string name="pubComAC">发布</string>
+    <string name="settingAC_tel">输入手机号</string>
+    <string name="settingAC_address">输入可交换地址</string>
+    <string name="settingAC_save">保存信息</string>
+    <string name="settingAC_input_failed">输入有误，请重新检查输入是否正确，完整（无特殊字符）!</string>
+    <string name="settingAC_toolbar">设置个人信息</string>
+    <string name="settingAC_input_success">保存成功!</string>
+    <string name="comAC_buyFailed">交易失败!</string>
+    <string name="comAC_cantStar">不能收藏自己的商品哦</string>
+    <string name="comAC_cantBuy">不能购买自己的商品哦</string>
+    <string name="comAC_starSuccess">收藏成功</string>
+    <string name="comAC_dontHaveAD">还未设置收货地址哦！请前往“我的”设置后再购买！</string>
+    <string name="positiveBtn">确定</string>
+    <string name="negativeBtn">取消</string>
+    <string name="dontStar">取消收藏?</string>
+    <string name="Telephone">手机号</string>
+    <string name="orderACSaveBtn">确定并提交订单</string>
+    <string name="orderAC_failed">交易失败</string>
+    <string name="orderAC_buySuccess">交易成功，请及时和卖家联系进行线下交易!</string>
+    <string-array name="exchangeable">
+        <item>可换</item>
+        <item>不可换</item>
+    </string-array>
+</resources>

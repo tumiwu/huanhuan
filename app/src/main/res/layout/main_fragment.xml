@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+            <com.youth.banner.Banner
+                android:id="@+id/main_frag_banner"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                />
+
+    </android.support.design.widget.AppBarLayout>
+
+
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/mainFrag_refresh_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/mainFrag_RecyclerView_marginTop"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+                <android.support.v7.widget.RecyclerView
+                    android:background="#c66868"
+                    android:id="@+id/Main_Frag_Commodity_RecView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="210dp"/>
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/addComFAB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:src="@drawable/add"
+        app:fabSize="normal"
+        android:clickable="true"
+        app:rippleColor="#bbffffff"
+        app:layout_behavior="com.example.a50067.huanhuan.Utility.ScrollAwareFABBehaviourDefault"
+
+        />
+</android.support.design.widget.CoordinatorLayout>
+

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/UserMsg_appBar"
+        android:layout_width="match_parent"
+        android:layout_height="150dp">
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/UserMsgCoToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            <include layout="@layout/toolbar_layout"
+                        app:layout_collapseMode="pin"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_collapseMode="parallax">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:gravity="center">
+                <ImageView
+                    android:id="@+id/UserMsgAC_uIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+
+                    app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                    android:background="@mipmap/person"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    app:layout_scrollFlags="scroll|exitUntilCollapsed">
+                    <TextView
+                        android:id="@+id/UserMsgAC_uName"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center"/>
+
+                    <TextView
+                        android:id="@+id/UserMsgAC_uSchool"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </android.support.design.widget.CollapsingToolbarLayout>
+
+    </android.support.design.widget.AppBarLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/UserMsgAC_RecView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="160dp"/>
+    </ScrollView>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/UserMsgAC_starUserBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        app:layout_anchor="@id/UserMsg_appBar"
+        app:layout_anchorGravity="bottom|end"
+        android:src="@drawable/star_false"
+
+        />
+    <!--android:src="@drawable/follow_user_selector"-->
+
+    </android.support.design.widget.CoordinatorLayout>

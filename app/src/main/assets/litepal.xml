@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<litepal>
+    <dbname value="HuanHuan"></dbname>
+    <version value="7"></version>
+    <list>
+        <mapping class="com.example.a50067.huanhuan.SQLTable.TBCategory"></mapping>
+        <mapping class="com.example.a50067.huanhuan.SQLTable.TBComComments"></mapping>
+        <mapping class="com.example.a50067.huanhuan.SQLTable.TBComments"></mapping>
+        <mapping class="com.example.a50067.huanhuan.SQLTable.TBCommodity"></mapping>
+        <mapping class="com.example.a50067.huanhuan.SQLTable.TBFollowsFans"></mapping>
+        <mapping class="com.example.a50067.huanhuan.SQLTable.TBOrder"></mapping>
+        <mapping class="com.example.a50067.huanhuan.SQLTable.TBStar"></mapping>
+        <mapping class="com.example.a50067.huanhuan.SQLTable.TBUser"></mapping>
+    </list>
+</litepal>

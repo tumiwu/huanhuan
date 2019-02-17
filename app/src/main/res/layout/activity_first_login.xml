@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_first_login"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.a50067.huanhuan.View.FirstLoginActivity">
+    <include layout="@layout/toolbar_layout"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_margin="10dp">
+
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/firstLogin_uName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/firstLogin_name"
+            android:inputType="textPhonetic"
+            android:maxLength="20"
+            android:maxLines="1" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <EditText
+        android:id="@+id/firstLogin_uTel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/firstLogin_tel"
+        android:inputType="number"
+        android:maxLength="12"
+        android:maxLines="1" />
+
+</android.support.design.widget.TextInputLayout>
+
+  <android.support.design.widget.TextInputLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <EditText
+        android:id="@+id/firstLogin_uSchool"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/firstLogin_School"
+        android:imeActionId="@+id/login"
+        android:imeActionLabel="@string/action_sign_in_short"
+        android:imeOptions="actionUnspecified"
+        android:maxLength="30"
+        android:maxLines="1" />
+
+</android.support.design.widget.TextInputLayout>
+<Button
+    android:id="@+id/firstLogin_Btn"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:background="@color/colorPrimary"
+    android:text="@string/firstLogin_btn"
+    android:textColor="#ffffff"
+    android:textSize="18sp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:gravity="center"
+            android:textColor="@color/colorPrimaryDark"
+            android:text="@string/firstLogin_hint"/>
+</LinearLayout>
+
+</LinearLayout>
