@@ -70,7 +70,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="@string/prompt_password"
-                            android:imeActionId="@+id/login"
+
                             android:imeActionLabel="@string/action_sign_in_short"
                             android:imeOptions="actionUnspecified"
                             android:inputType="textPassword"
@@ -79,9 +79,51 @@
                             android:text="6235548wxy"
 
                             />
+                        <!--android:imeActionId="@+id/login"-->
 
                     </android.support.design.widget.TextInputLayout>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        app:passwordToggleEnabled="true"
+        >
 
+        <EditText
+            android:id="@+id/login_checkcode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/prompt_checkcode"
+            android:imeOptions="actionUnspecified"
+            android:inputType=""
+            android:maxLength="20"
+            android:maxLines="1"
+
+            />
+        <!--android:imeActionId="@+id/login"-->
+
+    </android.support.design.widget.TextInputLayout>
+    <ImageView
+        android:id="@+id/login_checkcode_img"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content" />
+</LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <CheckBox
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layoutDirection="rtl"
+                            android:gravity="right|center_vertical"
+                            android:text="@string/remember_password"/>
+                    </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

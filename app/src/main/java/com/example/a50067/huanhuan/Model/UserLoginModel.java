@@ -6,6 +6,7 @@ import android.os.Message;
 import android.util.Log;
 
 import com.example.a50067.huanhuan.Entity.User;
+import com.example.a50067.huanhuan.Model.ModelListener.OnGetURLListener;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -19,6 +20,10 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 
 /**
@@ -34,8 +39,55 @@ public class UserLoginModel implements IUserLoginModel {
     String Usercookie;
     String data;
     Message msg;
+
+    Document document3;
+    String checkCodeURL;
+
     @Override
-    public void login(final String account, final String password, final Handler handler) {
+        public String getCheckCodeURL(OnGetURLListener onGetURLListener) {
+        OkHttpClient client=new OkHttpClient();
+        Request request=new Request.Builder()
+                .url("http://jwc.jxnu.edu.cn/Portal/LoginAccount.aspx?t=account")
+                .build();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    Response response=client.newCall(request).execute();
+                    BufferedReader reader=null;
+                    StringBuilder response2;
+                    InputStream in=response.body().byteStream();
+                    reader=new BufferedReader(new InputStreamReader(in));
+                    response2=new StringBuilder();
+                    String line;
+                    while ((line=reader.readLine())!=null){
+                        response2.append(line);
+                    }
+                    document3= Jsoup.parse(response2.toString());
+
+
+                    Element checkcode=document3.getElementById("_ctl0_cphContent_imgPasscode");
+                    checkCodeURL="http://jwc.jxnu.edu.cn/Portal/"+checkcode.attr("src");
+                    Log.d(TAG, "getCheckCodeURL: checkcodeurl"+checkCodeURL);
+                    if (checkcode.equals(null)){
+                        onGetURLListener.getURLFailed();
+                    }else {
+                        onGetURLListener.getURLSuccess(checkCodeURL);
+                    }
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+
+        return checkCodeURL;
+    }
+
+    @Override
+    public void login(final String account, final String password,final String checkcode, final Handler handler) {
         /*
          * 开启线程访问教务在线
          * 登陆
@@ -115,6 +167,7 @@ public class UserLoginModel implements IUserLoginModel {
                                 +URLEncoder.encode("_ctl0:cphContent:ddlUserType", "utf-8")+"=Student"+"&"
                                 +URLEncoder.encode("_ctl0:cphContent:txtUserNum", "utf-8")+"="+account + "&"
                                 +URLEncoder.encode("_ctl0:cphContent:txtPassword","utf-8")+"=" + password +"&"
+                                +URLEncoder.encode("_ctl0:cphContent:txtCheckCode","utf-8")+"="+checkcode+"&"
                                 + URLEncoder.encode("_ctl0:cphContent:btnLogin","utf-8")+"="+URLEncoder.encode("登录","utf-8");
                         Log.d(TAG, "run: data+"+data.toString());
                         Log.d(TAG, "run: data length "+data.length());

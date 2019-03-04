@@ -8,8 +8,10 @@ import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.a50067.huanhuan.BaseActivity;
 import com.example.a50067.huanhuan.Presenter.UserLoginPresenter;
 import com.example.a50067.huanhuan.R;
@@ -19,6 +21,8 @@ import org.litepal.LitePal;
 public class UserLoginActivity extends BaseActivity implements IUserLoginView,View.OnClickListener{
     private AutoCompleteTextView mAccountView;
     private EditText mPasswordView;
+    private EditText mCheckCodeView;
+    private ImageView mCheckCodeImage;
     private View mProgressView;
     private View mLoginFormView;
     private Button mLoginView;
@@ -38,6 +42,7 @@ public class UserLoginActivity extends BaseActivity implements IUserLoginView,Vi
         setSupportActionBar(toolbarView);
         toolbarView.setTitle(getResources().getString(R.string.action_sign_in));
         LitePal.getDatabase();
+        setCheckCode();
     }
 
     @Override
@@ -54,6 +59,8 @@ public class UserLoginActivity extends BaseActivity implements IUserLoginView,Vi
         setContentView(getRootLayoutId());
         mAccountView=(AutoCompleteTextView)findViewById(R.id.user_account);
         mPasswordView=(EditText)findViewById (R.id.user_password);
+        mCheckCodeView=(EditText)findViewById(R.id.login_checkcode);
+        mCheckCodeImage=(ImageView)findViewById(R.id.login_checkcode_img);
         mProgressView=findViewById(R.id.login_progress); //进度条
         mLoginFormView=findViewById(R.id.user_login_form);    //登陆框
         mLoginView=(Button)findViewById (R.id.sign_in_button);
@@ -87,6 +94,31 @@ public class UserLoginActivity extends BaseActivity implements IUserLoginView,Vi
     @Override
     public String getUserAccount() {
         return mAccountView.getText().toString();
+    }
+
+    @Override
+    public String getCheckCode() {
+        return mCheckCodeView.getText().toString();
+    }
+
+    @Override
+    public void setCheckCode() {
+        userLoginPresenter.getCheckCodeUrl();
+    }
+
+    @Override
+    public void setCheckCodeImg(String checkCodeURL) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Glide.with(UserLoginActivity.this)
+                        .load(checkCodeURL)
+                        .into(mCheckCodeImage);
+                //test
+                Log.d(TAG, "login ac setCheckCodeImg: checkcode v "+checkCodeURL);
+            }
+        });
+
     }
 
     /*

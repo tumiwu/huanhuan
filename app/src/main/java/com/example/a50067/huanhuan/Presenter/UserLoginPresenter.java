@@ -1,10 +1,12 @@
 package com.example.a50067.huanhuan.Presenter;
 
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
 import com.example.a50067.huanhuan.Model.IUserLoginModel;
+import com.example.a50067.huanhuan.Model.ModelListener.OnGetURLListener;
 import com.example.a50067.huanhuan.Model.UserLoginModel;
 import com.example.a50067.huanhuan.MyApplication;
 import com.example.a50067.huanhuan.SQLTable.TBUser;
@@ -31,6 +33,25 @@ public class UserLoginPresenter {
     }
 
     /*
+    * 获取验证码*/
+
+    public void getCheckCodeUrl(){
+       userLoginModel.getCheckCodeURL(new OnGetURLListener() {
+           @Override
+           public void getURLSuccess(String url) {
+               userLoginView.setCheckCodeImg(url);
+               Log.d(TAG, "getURLSuccess: login p url "+url);
+           }
+
+           @Override
+           public void getURLFailed() {
+            // toast获取失败，检查网络
+           }
+       });
+    }
+
+
+    /*
     * 用户登录
     * */
 
@@ -38,7 +59,7 @@ public class UserLoginPresenter {
         createHandler();
         userLoginView.showLoading();
 
-        userLoginModel.login(userLoginView.getUserAccount(),userLoginView.getUserPassword(),mHandler);
+        userLoginModel.login(userLoginView.getUserAccount(),userLoginView.getUserPassword(),userLoginView.getCheckCode(),mHandler);
     }
 
 
