@@ -5,6 +5,7 @@ package com.example.a50067.huanhuan.Model.ModelListener;
  */
 
 public interface OnInsertSQLListener {
+
     void insertSuccess();
     void insertFailed();
 }

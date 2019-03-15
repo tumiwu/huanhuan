@@ -51,19 +51,25 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setNOTitle(false);
         setState(false);
-
+        Log.d(TAG, "onCreate: 1");
         initView();
+        Log.d(TAG, "onCreate: 2");
         initFragment();
-
+        Log.d(TAG, "onCreate: 3");
 
         setSupportActionBar(toolbarView);
         toolbarView.setTitle(getResources().getString(R.string.mainac));
+        Log.d(TAG, "onCreate: 4");
         newMainPagerAdapter=new MyNewMainPagerAdapter(fragmentManager,fragmentList);
         Log.d(TAG, "onCreate: fragment list size "+fragmentList.size());
         mViewPager.setAdapter(newMainPagerAdapter);
         mViewPager.setCurrentItem(0);
         mViewPager.setOffscreenPageLimit(4);
+        Log.d(TAG, "onCreate: 5");
+
         initListener();
+        Log.d(TAG, "onCreate: 6");
+
 //        mTabView.setupWithViewPager(mViewPager);
 
 

@@ -2,26 +2,20 @@ package com.example.a50067.huanhuan.SQLTable;
 
 import org.litepal.crud.LitePalSupport;
 
+import cn.bmob.v3.BmobObject;
+
 /**
  * Created by 50067 on 2018/6/14.
  */
 
-public class TBComComments  extends LitePalSupport {        //商品下的评论
-    private int id;     //评论id
+public class TBComComments  extends BmobObject {        //商品下的评论
     private int ccomtsType;      //评论类型 0:别人对商品的回复 1:别人对自己的回复
-    private int commodityId;        //商品Id
-    private int userId;             //评论者id
-    private int comtsToUserId;      //被评论者id
+    private String commodityId;        //商品Id
+    private String userId;             //评论者id
+    private String comtsToUserId;      //被评论者id
     private String ccomtsContent;   //评论内容
     private String ccomtsDeletes;   //删除标记
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public int getCcomtsType() {
         return ccomtsType;
@@ -31,27 +25,27 @@ public class TBComComments  extends LitePalSupport {        //商品下的评论
         this.ccomtsType = ccomtsType;
     }
 
-    public int getCommodityId() {
+    public String getCommodityId() {
         return commodityId;
     }
 
-    public void setCommodityId(int commodityId) {
+    public void setCommodityId(String commodityId) {
         this.commodityId = commodityId;
     }
 
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
-    public int getComtsToUserId() {
+    public String getComtsToUserId() {
         return comtsToUserId;
     }
 
-    public void setComtsToUserId(int comtsToUserId) {
+    public void setComtsToUserId(String comtsToUserId) {
         this.comtsToUserId = comtsToUserId;
     }
 

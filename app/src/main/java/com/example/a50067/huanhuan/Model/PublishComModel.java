@@ -1,16 +1,20 @@
 package com.example.a50067.huanhuan.Model;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.util.Log;
 
 import com.example.a50067.huanhuan.Model.ModelListener.OnInsertSQLListener;
 import com.example.a50067.huanhuan.MyApplication;
 import com.example.a50067.huanhuan.SQLTable.TBCommodity;
-import com.example.a50067.huanhuan.View.IPublishcommodityView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Date;
+
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.SaveListener;
 
 
 /**
@@ -18,6 +22,7 @@ import java.util.Date;
  */
 
 public class PublishComModel implements IPublishComModel {
+    private static final String TAG = "PublishComModel";
     TBCommodity tbCommodity=new TBCommodity();
     int e;
     @Override
@@ -33,15 +38,31 @@ public class PublishComModel implements IPublishComModel {
         }
         tbCommodity.setcExchangeable(e);
         tbCommodity.setcImage(img(bitmap));
-        tbCommodity.setUserId(MyApplication.getUserId());
-        tbCommodity.save();
-        listener.insertSuccess();
+        Log.d(TAG, "saveComMsg: done:uId + my id : "+MyApplication.getUserObjectId());
+        tbCommodity.setUserId(MyApplication.getUserObjectId());
+        tbCommodity.save(new SaveListener<String>() {
+            @Override
+            public void done(String s, BmobException e) {
+                if(e!=null){
+                    Log.d(TAG, "done: e "+e.toString());
+                }else {
+                    listener.insertSuccess();
+                }
+
+            }
+        });
+
     }
 
     private byte[] img(Bitmap bitmap){
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+
         return baos.toByteArray();
+
+
     }
+
+
 
 }

@@ -3,7 +3,6 @@ apply plugin: 'com.android.application'
 android {
     useLibrary 'org.apache.http.legacy'
     compileSdkVersion 27
-    buildToolsVersion '28.0.2'
     defaultConfig {
         applicationId "com.example.a50067.huanhuan"
         minSdkVersion 19

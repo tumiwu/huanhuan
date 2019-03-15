@@ -9,5 +9,5 @@ import com.example.a50067.huanhuan.Model.ModelListener.OnSwipeRefreshLayoutListe
  */
 
 public interface IStarFragModel {
-    void getStarComRecViewData(OnSwipeRefreshLayoutListener listener);
+    void getStarComRecViewData(OnSwipeRefreshLayoutListener listener,Handler handler);
 }

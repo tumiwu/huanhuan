@@ -41,7 +41,7 @@ public class UserLoginActivity extends BaseActivity implements IUserLoginView,Vi
         initListener();
         setSupportActionBar(toolbarView);
         toolbarView.setTitle(getResources().getString(R.string.action_sign_in));
-        LitePal.getDatabase();
+//        LitePal.getDatabase();
         setCheckCode();
     }
 

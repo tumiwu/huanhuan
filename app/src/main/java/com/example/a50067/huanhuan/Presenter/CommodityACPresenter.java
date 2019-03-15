@@ -18,7 +18,7 @@ public class CommodityACPresenter {
         commodityACModel=new CommodityACModel();
     }
 
-    public void starCom(int comId){
+    public void starCom(String comId){
         commodityACModel.modelStarCom(comId, new OnInsertSQLListener() {
             @Override
             public void insertSuccess() {

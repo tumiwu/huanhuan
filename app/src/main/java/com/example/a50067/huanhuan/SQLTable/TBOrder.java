@@ -4,51 +4,44 @@ import org.litepal.crud.LitePalSupport;
 
 import java.util.Date;
 
+import cn.bmob.v3.BmobObject;
+
 
 /**
  * Created by 50067 on 2018/6/14.
  */
 
-public class TBOrder  extends LitePalSupport {
-    private int id;
-    private int sellerId;
-    private int buyerId;
-    private int comId;
+public class TBOrder  extends BmobObject {
+    private String sellerId;
+    private String buyerId;
+    private String comId;
     private int orState;
     private Date orEstablishDate;
     private Date orFinishDate;
     private int orDelete;
 
-    public int getComId() {
-        return comId;
-    }
-
-    public void setComId(int comId) {
-        this.comId = comId;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getSellerId() {
+    public String getSellerId() {
         return sellerId;
     }
 
-    public void setSellerId(int sellerId) {
+    public void setSellerId(String sellerId) {
         this.sellerId = sellerId;
     }
 
-    public int getBuyerId() {
+    public String getBuyerId() {
         return buyerId;
     }
 
-    public void setBuyerId(int buyerId) {
+    public void setBuyerId(String buyerId) {
         this.buyerId = buyerId;
+    }
+
+    public String getComId() {
+        return comId;
+    }
+
+    public void setComId(String comId) {
+        this.comId = comId;
     }
 
     public int getOrState() {

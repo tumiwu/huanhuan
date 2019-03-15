@@ -2,37 +2,30 @@ package com.example.a50067.huanhuan.SQLTable;
 
 import org.litepal.crud.LitePalSupport;
 
+import cn.bmob.v3.BmobObject;
+
 /**
  * Created by 50067 on 2018/6/14.
  */
 
-public class TBFollowsFans  extends LitePalSupport {
-    private int id;
-    private int uId;        //关注用户id
-    private int fansId;     //粉丝id
+public class TBFollowsFans extends BmobObject {
+    private String uId;        //关注用户id
+    private String fansId;     //粉丝id
     private int ffDelete;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getuId() {
+    public String getuId() {
         return uId;
     }
 
-    public void setuId(int uId) {
+    public void setuId(String uId) {
         this.uId = uId;
     }
 
-    public int getFansId() {
+    public String getFansId() {
         return fansId;
     }
 
-    public void setFansId(int fansId) {
+    public void setFansId(String fansId) {
         this.fansId = fansId;
     }
 

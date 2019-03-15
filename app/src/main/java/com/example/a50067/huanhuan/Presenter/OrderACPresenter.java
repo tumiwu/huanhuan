@@ -20,7 +20,7 @@ public class OrderACPresenter {
         orderACModel=new OrderACModel();
     }
 
-    public void insertOrder(int comId,int sellerId){
+    public void insertOrder(String comId,String sellerId){
         orderACModel.modelInsertOrder(comId, sellerId, new Date(), new OnInsertSQLListener() {
             @Override
             public void insertSuccess() {

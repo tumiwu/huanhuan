@@ -7,6 +7,6 @@ package com.example.a50067.huanhuan.View;
 public interface ICommodityACView {
     void intentToOrderAC();
     void buyComFailed();
-    int getComId();
+    String getComId();
     void starSuccess();
 }

@@ -2,23 +2,16 @@ package com.example.a50067.huanhuan.SQLTable;
 
 import org.litepal.crud.LitePalSupport;
 
+import cn.bmob.v3.BmobObject;
+
 /**
  * Created by 50067 on 2018/6/14.
  */
 
-public class TBCategory extends LitePalSupport{
-    private int id;
+public class TBCategory extends BmobObject {
     private String caName;
     private String caCount;
     private String caDelete;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getCaName() {
         return caName;

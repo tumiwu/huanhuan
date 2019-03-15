@@ -7,7 +7,7 @@ import java.util.Date;
  */
 
 public class Commodity {
-    int cId;
+    String cId;
     byte[] cImage;
     String cExchangeable;
     String cName;
@@ -17,7 +17,10 @@ public class Commodity {
     String UserName;
     String UserSchool;
 
-    public Commodity(int cId, byte[] cImage, String cExchangeable, String cName, String cPrice, String cDetails, Date cUploadDate, String userName, String userSchool) {
+    public Commodity(){
+
+    }
+    public Commodity(String cId, byte[] cImage, String cExchangeable, String cName, String cPrice, String cDetails, Date cUploadDate, String userName, String userSchool) {
         this.cId = cId;
         this.cImage = cImage;
         this.cExchangeable = cExchangeable;
@@ -29,19 +32,18 @@ public class Commodity {
         UserSchool = userSchool;
     }
 
-    public Commodity(int cId,byte[] cImage, String cPrice, String userName, String cName) {
+    public Commodity(String cId,byte[] cImage, String cPrice, String cName) {
         this.cId = cId;
         this.cImage = cImage;
         this.cPrice = cPrice;
-        UserName = userName;
         this.cName = cName;
     }
 
-    public int getcId() {
+    public String getcId() {
         return cId;
     }
 
-    public void setcId(int cId) {
+    public void setcId(String cId) {
         this.cId = cId;
     }
 

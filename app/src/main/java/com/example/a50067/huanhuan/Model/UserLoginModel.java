@@ -15,12 +15,17 @@ import org.jsoup.nodes.Element;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.List;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -43,6 +48,10 @@ public class UserLoginModel implements IUserLoginModel {
     Document document3;
     String checkCodeURL;
 
+
+    //test
+    HttpURLConnection connection;
+
     @Override
         public String getCheckCodeURL(OnGetURLListener onGetURLListener) {
         OkHttpClient client=new OkHttpClient();
@@ -50,11 +59,12 @@ public class UserLoginModel implements IUserLoginModel {
                 .url("http://jwc.jxnu.edu.cn/Portal/LoginAccount.aspx?t=account")
                 .build();
 
-        new Thread(new Runnable() {
+       /* new Thread(new Runnable() {
             @Override
             public void run() {
                 try{
                     Response response=client.newCall(request).execute();
+
                     BufferedReader reader=null;
                     StringBuilder response2;
                     InputStream in=response.body().byteStream();
@@ -80,11 +90,66 @@ public class UserLoginModel implements IUserLoginModel {
                     e.printStackTrace();
                 }
             }
-        }).start();
+        }).start();*/
+        Call call=client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                onGetURLListener.getURLFailed();
+            }
 
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                BufferedReader reader=null;
+                StringBuilder response2;
+                InputStream in=response.body().byteStream();
+                reader=new BufferedReader(new InputStreamReader(in));
+                response2=new StringBuilder();
+                String line;
+                while ((line=reader.readLine())!=null){
+                    response2.append(line);
+                }
+                document3= Jsoup.parse(response2.toString());
+
+
+                Element checkcode=document3.getElementById("_ctl0_cphContent_imgPasscode");
+                checkCodeURL="http://jwc.jxnu.edu.cn/Portal/"+checkcode.attr("src");
+                Log.d(TAG, "getCheckCodeURL: checkcodeurl"+checkCodeURL);
+                onGetURLListener.getURLSuccess(checkCodeURL);
+
+                Headers headers=response.headers();
+                List<String> cookies=headers.values("Set-Cookie");
+                String session=cookies.get(0);
+                Usercookie=session.substring(0,session.indexOf(";"));
+                Log.d(TAG, "onResponse: session : "+session);
+                Log.d(TAG, "onResponse: sessionid :"+Usercookie);
+
+                document= Jsoup.parse(response2.toString());
+                Element _v=document.getElementById("__VIEWSTATE");
+                __VIEWSTATE=_v.attr("value");
+                Log.d(TAG, "onResponse: __VIEWSTATE    "+__VIEWSTATE);
+                Element _e=document.getElementById("__EVENTVALIDATION");
+                __EVENTVALIDATION=_e.attr("value");
+//                        data="__EVENTTARGET=&__EVENTARGUMENT=&__LASTFOCUS=&__VIEWSTATE=%2FwEPDwUJNjA5MzAzMTcwD2QWAmYPZBYCAgMPZBYGZg8WAh4EVGV4dAUpMjAxOeW5tDPmnIgxMuaXpSDmmJ%2FmnJ%2FkuowmbmJzcDvmpI3moJHoioJkAgIPZBYCAgEPFgIfAAUS6LSm5Y%2B35a%2BG56CB55m75b2VZAIDD2QWBAIBDw8WAh4HVmlzaWJsZWdkFgoCAQ8QZGQWAWZkAgMPZBYCAgEPFgIfAAUG5a2m5Y%2B3ZAIFDw8WAh8BaGQWAgIBDxAPFgYeDURhdGFUZXh0RmllbGQFDOWNleS9jeWQjeensB4ORGF0YVZhbHVlRmllbGQFCeWNleS9jeWPtx4LXyFEYXRhQm91bmRnZBAVGxLotKLmlL%2Fph5Hono3lrabpmaIS5Z%2BO5biC5bu66K6%2B5a2m6ZmiEuWIneetieaVmeiCsuWtpumZohXlnLDnkIbkuI7njq%2FlooPlrabpmaIS5YWs6LS55biI6IyD55Sf6ZmiEuWbvemZheaVmeiCsuWtpumZohLljJblrabljJblt6XlrabpmaIb6K6h566X5py65L%2Bh5oGv5bel56iL5a2m6ZmiEue7p%2Be7reaVmeiCsuWtpumZogzmlZnogrLlrabpmaIe5Yab5LqL5pWZ56CU6YOo77yI5q2m6KOF6YOo77yJEuenkeWtpuaKgOacr%2BWtpumZohvljoblj7LmlofljJbkuI7ml4XmuLjlrabpmaIV6ams5YWL5oCd5Li75LmJ5a2m6ZmiDOe%2Bjuacr%2BWtpumZogzova%2Fku7blrabpmaIJ5ZWG5a2m6ZmiEueUn%2BWRveenkeWtpuWtpumZohvmlbDlrabkuI7kv6Hmga%2Fnp5HlrablrabpmaIM5L2T6IKy5a2m6ZmiD%2BWkluWbveivreWtpumZognmloflrabpmaIb54mp55CG5LiO6YCa5L%2Bh55S15a2Q5a2m6ZmiDOW%2Fg%2BeQhuWtpumZohXmlrDpl7vkuI7kvKDmkq3lrabpmaIM6Z%2Bz5LmQ5a2m6ZmiDOaUv%2BazleWtpumZohUbCDY4MDAwICAgCDYzMDAwICAgCDgyMDAwICAgCDQ4MDAwICAgCDU3MDAwICAgCDY5MDAwICAgCDYxMDAwICAgCDYyMDAwICAgCDQ1MCAgICAgCDUwMDAwICAgCDM3MDAwICAgCDgxMDAwICAgCDU4MDAwICAgCDQ2MDAwICAgCDY1MDAwICAgCDY3MDAwICAgCDU0MDAwICAgCDY2MDAwICAgCDU1MDAwICAgCDU2MDAwICAgCDUyMDAwICAgCDUxMDAwICAgCDYwMDAwICAgCDQ5MDAwICAgCDY0MDAwICAgCDUzMDAwICAgCDU5MDAwICAgFCsDG2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZxYBZmQCCw8PFgIeCEltYWdlVXJsBSRjaGVja2NvZGUuYXNweD9jb2RlPUJBREY2Q0IxQjU0NDM1RDZkZAINDxYCHwAFEEJBREY2Q0IxQjU0NDM1RDZkAgMPDxYCHwFoZGRkNKJZY%2FRrUPPlyxWnEwAZRqG8EGcC8yJC%2FopEvkVZ1q4%3D&__EVENTVALIDATION=%2FwEWCgLsibKTBwKFsp%2FHCgL%2B44ewDwKiwZ6GAgKWuv6KDwLj3Z22BgL6up5fAv%2FWopgDAqbyykwC68zH9gYNwPnfWdsSb0HKrryc56CIpiItaNlVOKq7pap8D7scdA%3D%3D&_ctl0%3AcphContent%3AddlUserType=Student&_ctl0%3AcphContent%3AtxtUserNum=201526706019&_ctl0%3AcphContent%3AtxtPassword=6235548wxy&_ctl0%3AcphContent%3AtxtCheckCode=QNFT&_ctl0%3AcphContent%3AbtnLogin=%E7%99%BB%E5%BD%95";
+                Log.d(TAG, "onResponse:  __EVENTVALIDATION    "+__EVENTVALIDATION);
+            }
+        });
 
         return checkCodeURL;
     }
+
+/*
+    @Override
+    public String getCheckCodeURL(OnGetURLListener onGetURLListener) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                connection=
+            }
+        }).start();
+        return null;
+    }
+*/
 
     @Override
     public void login(final String account, final String password,final String checkcode, final Handler handler) {
@@ -129,7 +194,8 @@ public class UserLoginModel implements IUserLoginModel {
                     String cookiesKey="Set-Cookie";
                     String cookieVal = "";
                     String key = null;
-                    Usercookie=null;
+
+                   /* Usercookie=null;
                     for (int i = 1; (key = connection.getHeaderFieldKey(i)) != null; i++) {
                         if (key.equalsIgnoreCase("set-cookie")) {
                             cookieVal = connection.getHeaderField(i);
@@ -141,7 +207,8 @@ public class UserLoginModel implements IUserLoginModel {
                     String[] array=Usercookie.split("null");
                     Usercookie=array[1];
                     Log.d(TAG, "run: cookie： "+Usercookie);
-                    Log.d(TAG, "run:cookie  a1"+array[1]);
+                    Log.d(TAG, "run:cookie  a1"+array[1]);*/
+
                     /*
                      * 读取输入流
                      * */
@@ -156,12 +223,13 @@ public class UserLoginModel implements IUserLoginModel {
                             response.append(line);
                         }
                         document= Jsoup.parse(response.toString());
-                        Log.d(TAG, "run: documents___________________"+document.outerHtml());
+                       /* Log.d(TAG, "run: documents___________________"+document.outerHtml());
                         Element _v=document.getElementById("__VIEWSTATE");
                         __VIEWSTATE=_v.attr("value");
 
                         Element _e=document.getElementById("__EVENTVALIDATION");
-                        __EVENTVALIDATION=_e.attr("value");
+                        __EVENTVALIDATION=_e.attr("value");*/
+//                        data="__EVENTTARGET=&__EVENTARGUMENT=&__LASTFOCUS=&__VIEWSTATE=%2FwEPDwUJNjA5MzAzMTcwD2QWAmYPZBYCAgMPZBYGZg8WAh4EVGV4dAUpMjAxOeW5tDPmnIgxMuaXpSDmmJ%2FmnJ%2FkuowmbmJzcDvmpI3moJHoioJkAgIPZBYCAgEPFgIfAAUS6LSm5Y%2B35a%2BG56CB55m75b2VZAIDD2QWBAIBDw8WAh4HVmlzaWJsZWdkFgoCAQ8QZGQWAWZkAgMPZBYCAgEPFgIfAAUG5a2m5Y%2B3ZAIFDw8WAh8BaGQWAgIBDxAPFgYeDURhdGFUZXh0RmllbGQFDOWNleS9jeWQjeensB4ORGF0YVZhbHVlRmllbGQFCeWNleS9jeWPtx4LXyFEYXRhQm91bmRnZBAVGxLotKLmlL%2Fph5Hono3lrabpmaIS5Z%2BO5biC5bu66K6%2B5a2m6ZmiEuWIneetieaVmeiCsuWtpumZohXlnLDnkIbkuI7njq%2FlooPlrabpmaIS5YWs6LS55biI6IyD55Sf6ZmiEuWbvemZheaVmeiCsuWtpumZohLljJblrabljJblt6XlrabpmaIb6K6h566X5py65L%2Bh5oGv5bel56iL5a2m6ZmiEue7p%2Be7reaVmeiCsuWtpumZogzmlZnogrLlrabpmaIe5Yab5LqL5pWZ56CU6YOo77yI5q2m6KOF6YOo77yJEuenkeWtpuaKgOacr%2BWtpumZohvljoblj7LmlofljJbkuI7ml4XmuLjlrabpmaIV6ams5YWL5oCd5Li75LmJ5a2m6ZmiDOe%2Bjuacr%2BWtpumZogzova%2Fku7blrabpmaIJ5ZWG5a2m6ZmiEueUn%2BWRveenkeWtpuWtpumZohvmlbDlrabkuI7kv6Hmga%2Fnp5HlrablrabpmaIM5L2T6IKy5a2m6ZmiD%2BWkluWbveivreWtpumZognmloflrabpmaIb54mp55CG5LiO6YCa5L%2Bh55S15a2Q5a2m6ZmiDOW%2Fg%2BeQhuWtpumZohXmlrDpl7vkuI7kvKDmkq3lrabpmaIM6Z%2Bz5LmQ5a2m6ZmiDOaUv%2BazleWtpumZohUbCDY4MDAwICAgCDYzMDAwICAgCDgyMDAwICAgCDQ4MDAwICAgCDU3MDAwICAgCDY5MDAwICAgCDYxMDAwICAgCDYyMDAwICAgCDQ1MCAgICAgCDUwMDAwICAgCDM3MDAwICAgCDgxMDAwICAgCDU4MDAwICAgCDQ2MDAwICAgCDY1MDAwICAgCDY3MDAwICAgCDU0MDAwICAgCDY2MDAwICAgCDU1MDAwICAgCDU2MDAwICAgCDUyMDAwICAgCDUxMDAwICAgCDYwMDAwICAgCDQ5MDAwICAgCDY0MDAwICAgCDUzMDAwICAgCDU5MDAwICAgFCsDG2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZxYBZmQCCw8PFgIeCEltYWdlVXJsBSRjaGVja2NvZGUuYXNweD9jb2RlPUJBREY2Q0IxQjU0NDM1RDZkZAINDxYCHwAFEEJBREY2Q0IxQjU0NDM1RDZkAgMPDxYCHwFoZGRkNKJZY%2FRrUPPlyxWnEwAZRqG8EGcC8yJC%2FopEvkVZ1q4%3D&__EVENTVALIDATION=%2FwEWCgLsibKTBwKFsp%2FHCgL%2B44ewDwKiwZ6GAgKWuv6KDwLj3Z22BgL6up5fAv%2FWopgDAqbyykwC68zH9gYNwPnfWdsSb0HKrryc56CIpiItaNlVOKq7pap8D7scdA%3D%3D&_ctl0%3AcphContent%3AddlUserType=Student&_ctl0%3AcphContent%3AtxtUserNum=201526706019&_ctl0%3AcphContent%3AtxtPassword=6235548wxy&_ctl0%3AcphContent%3AtxtCheckCode=QNFT&_ctl0%3AcphContent%3AbtnLogin=%E7%99%BB%E5%BD%95";
                         data = "__EVENTTARGET=&__EVENTARGUMENT=&__LASTFOCUS=&__VIEWSTATE=" + URLEncoder.encode(__VIEWSTATE, "utf-8") + "&__EVENTVALIDATION="
                                 + URLEncoder.encode(__EVENTVALIDATION, "utf-8") +"&"
                                 +URLEncoder.encode("_ctl0:cphContent:ddlUserType", "utf-8")+"=Student"+"&"
@@ -175,9 +243,10 @@ public class UserLoginModel implements IUserLoginModel {
                     POST:进行登录请求
                     */
 
-                        URL url2=connection.getURL();
-                        Log.d(TAG, "run: !!!!!!url2"+url2.toString());
-                        connection =(HttpURLConnection)url2.openConnection();
+
+                       /* URL url2=connection.getURL();
+                        Log.d(TAG, "run: !!!!!!url2"+url2.toString());*/
+                        connection =(HttpURLConnection)url.openConnection();
                         connection.setRequestMethod("POST");     //
                         connection.setConnectTimeout(80000);
                         connection.setReadTimeout(80000);
@@ -186,9 +255,9 @@ public class UserLoginModel implements IUserLoginModel {
                         connection.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
                         connection.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36 SE 2.X MetaSr 1.0");
                        connection.setRequestProperty("Content-Length",data.length()+"");
-                        connection.setRequestProperty("Upgrade-Insecure-Requests","1");
-                        connection.setRequestProperty("Origin","http://jwc.jxnu.edu.cn");
-                        connection.setRequestProperty("Referer","http://jwc.jxnu.edu.cn/Portal/Index.aspx");
+//                        connection.setRequestProperty("Upgrade-Insecure-Requests","1");
+//                        connection.setRequestProperty("Origin","http://jwc.jxnu.edu.cn");
+//                        connection.setRequestProperty("Referer","http://jwc.jxnu.edu.cn/Portal/Index.aspx");
 //                       connection.setRequestProperty("Accept-Encoding", "identity");////////
                         connection.setDoOutput(true); // 发送POST请求必须设置允许输出
                         connection.setDoInput(true); // 发送POST请求必须设置允许输入
@@ -215,6 +284,7 @@ public class UserLoginModel implements IUserLoginModel {
                             }
                             document2= Jsoup.parse(response2.toString());
 
+                            Log.d(TAG, "run: document content "+document2.toString());
                             /*
                              * 判断登陆是否成功
                              * */

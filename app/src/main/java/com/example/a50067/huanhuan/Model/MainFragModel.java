@@ -17,6 +17,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.QueryListener;
+
 /**
  * Created by 50067 on 2018/5/23.
  */
@@ -56,7 +61,72 @@ public class MainFragModel implements IMainFragModel{
         if(commodityList==null){
         commodityList=new ArrayList<>();
         }
-        List<TBCommodity> commodities= LitePal.findAll(TBCommodity.class);
+
+        BmobQuery<TBCommodity> tbCommodityBmobQuery=new BmobQuery<>();
+//        tbCommodityBmobQuery.addWhereEqualTo("cDelete","0");
+        tbCommodityBmobQuery.findObjects(new FindListener<TBCommodity>() {
+            @Override
+            public void done(List<TBCommodity> list, BmobException e) {
+
+                if(e==null&&list.size()!=0){
+                    try {
+                        Log.d(TAG, "getComRecViewData: commodities size " + list.size());
+//                Log.d(TAG, "getComRecViewData: orderlist size "+orderList.size());
+                        for (TBCommodity tbcommodity : list) {
+                            Log.d(TAG, "getComRecViewData: come into here");
+                            //先查询订单表里面商品有没有被卖出，有则不添加到list。
+                            // 卖出的商品delete为1
+                            if (tbcommodity.getcDelete() != 1) {
+                                String uId = tbcommodity.getUserId();
+
+                                Log.d(TAG, "done: uId "+uId);
+
+                                BmobQuery<TBUser> tbUserBmobQuery=new BmobQuery<>();
+                                tbUserBmobQuery.addWhereEqualTo("objectId",uId);
+                                tbUserBmobQuery.getObject(uId, new QueryListener<TBUser>() {
+                                    @Override
+                                    public void done(TBUser tbUser, BmobException e) {
+                                        Commodity commodity1;
+                                        String changeable = tbcommodity.getcExchangeable() == 0 ? mContext.getString(R.string.exchange) : mContext.getString(R.string.noexchange);
+                                        Log.d(TAG, "getComRecViewData: exchangable" + changeable);
+
+                                        commodity1=new Commodity();
+                                        commodity1.setcId(tbcommodity.getObjectId());
+                                        commodity1.setcImage(tbcommodity.getcImage());
+                                        commodity1.setcExchangeable(changeable);
+                                        commodity1.setcName(tbcommodity.getcName());
+                                        commodity1.setcPrice(tbcommodity.getcPrice());
+                                        commodity1.setcDetails(tbcommodity.getcDetails());
+                                        commodity1.setcUploadDate(tbcommodity.getcUploadDate());
+                                        commodity1.setUserName(tbUser.getuName());
+                                        commodity1.setUserSchool(tbUser.getuSchool());
+
+//                                        commodity1 = new Commodity(tbcommodity.getObjectId(), tbcommodity.getcImage(), changeable, tbcommodity.getcName(), tbcommodity.getcPrice(), tbcommodity.getcDetails(), tbcommodity.getcUploadDate(), tbUser.getuName(), tbUser.getuSchool());
+                                        commodityList.add(commodity1);
+                                        Log.d(TAG, "getComRecViewData: after add list size 111" + commodityList.size());
+                                        listener.refreshSuccess(commodityList);
+
+                                    }
+                                });
+
+
+                    }
+//                            }
+
+
+                        }
+
+                        Log.d(TAG, "getComRecViewData: after add list size " + commodityList.size());
+                    }catch (Exception e2){
+                        e2.printStackTrace();
+                    }
+                }else{
+                    listener.refreshFailed("目前没有商品信息!");
+                }
+            }
+        });
+
+       /* List<TBCommodity> commodities= LitePal.findAll(TBCommodity.class);
 //        List<TBOrder> orderList=LitePal.findAll(TBOrder.class);
         if(commodities.size()==0){
             listener.refreshFailed("目前没有商品信息!");
@@ -79,7 +149,7 @@ public class MainFragModel implements IMainFragModel{
                         Commodity commodity1;
                         String changeable=tbcommodity.getcExchangeable()==0?mContext.getString(R.string.exchange):mContext.getString(R.string.noexchange);
                         Log.d(TAG, "getComRecViewData: exchangable"+changeable);
-                            commodity1 = new Commodity(tbcommodity.getId(), tbcommodity.getcImage(),changeable, tbcommodity.getcName(), tbcommodity.getcPrice(), tbcommodity.getcDetails(), tbcommodity.getcUploadDate(), user1.getuName(), user1.getuSchool());
+                            commodity1 = new Commodity(tbcommodity.getObjectId(), tbcommodity.getcImage(),changeable, tbcommodity.getcName(), tbcommodity.getcPrice(), tbcommodity.getcDetails(), tbcommodity.getcUploadDate(), user1.getuName(), user1.getuSchool());
                         commodityList.add(commodity1);
                         Log.d(TAG, "getComRecViewData: after add list size " + commodityList.size());
 //                            }
@@ -93,7 +163,7 @@ public class MainFragModel implements IMainFragModel{
             }
             listener.refreshSuccess(commodityList);
         }
-
+*/
 
     }
 

@@ -9,6 +9,6 @@ import java.util.Date;
  */
 
 public interface IOrderACModel {
-    void modelInsertOrder(int comId, int sellerId, Date date, OnInsertSQLListener listener);
+    void modelInsertOrder(String comId, String sellerId, Date date, OnInsertSQLListener listener);
 
 }

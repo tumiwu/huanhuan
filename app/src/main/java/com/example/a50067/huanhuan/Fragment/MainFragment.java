@@ -59,6 +59,7 @@ public class MainFragment extends BaseFragment implements OnBannerListener,IMain
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
         initListener();
         getPresenter();
         registerRefreshRecViewDataBroadCast();

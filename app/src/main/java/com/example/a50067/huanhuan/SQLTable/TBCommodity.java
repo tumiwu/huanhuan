@@ -4,14 +4,15 @@ import org.litepal.crud.LitePalSupport;
 
 import java.util.Date;
 
+import cn.bmob.v3.BmobObject;
+
 
 /**
  * Created by 50067 on 2018/6/14.
  */
 
-public class TBCommodity  extends LitePalSupport {
-    private int id;
-    private int userId;
+public class TBCommodity  extends BmobObject {
+    private String userId;
     private byte[] cImage;
     private String cName;
     private String cCategory;
@@ -21,20 +22,12 @@ public class TBCommodity  extends LitePalSupport {
     private int cExchangeable;
     private int cDelete;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(int uId) {
-        this.userId = uId;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getcName() {

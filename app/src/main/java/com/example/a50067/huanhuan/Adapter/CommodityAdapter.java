@@ -18,6 +18,10 @@ import com.example.a50067.huanhuan.R;
 import com.example.a50067.huanhuan.View.CommodityActivity;
 import com.example.a50067.huanhuan.View.MainActivity;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.ref.SoftReference;
 import java.util.List;
 
 /**
@@ -81,7 +85,8 @@ public class CommodityAdapter extends RecyclerView.Adapter<CommodityAdapter.View
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Commodity mCom=commodityList.get(position);
-        holder.cImage.setImageBitmap(BitmapFactory.decodeByteArray(mCom.getcImage(),0,mCom.getcImage().length));
+//        holder.cImage.setImageBitmap(BitmapFactory.decodeByteArray(mCom.getcImage(),0,mCom.getcImage().length));
+        holder.cImage.setImageBitmap(byteToBitmap(mCom.getcImage()));
         holder.cImageExchangeable.setText(mCom.getcExchangeable());
         holder.cName.setText(mCom.getcName());
         holder.cPrice.setText(mCom.getcPrice());
@@ -96,6 +101,29 @@ public class CommodityAdapter extends RecyclerView.Adapter<CommodityAdapter.View
         return commodityList.size();
     }
 
+    public static Bitmap byteToBitmap(byte[] imgByte) {
+        InputStream input = null;
+        Bitmap bitmap = null;
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 8;
+        input = new ByteArrayInputStream(imgByte);
+        SoftReference softRef = new SoftReference(BitmapFactory.decodeStream(
+                input, null, options));
+        bitmap = (Bitmap) softRef.get();
+        if (imgByte != null) {
+            imgByte = null;
+        }
+
+        try {
+            if (input != null) {
+                input.close();
+            }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return bitmap;
+    }
 
 
 }

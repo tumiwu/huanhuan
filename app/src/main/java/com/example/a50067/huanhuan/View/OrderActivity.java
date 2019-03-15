@@ -20,10 +20,14 @@ import com.example.a50067.huanhuan.SQLTable.TBUser;
 
 import org.litepal.LitePal;
 
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.QueryListener;
+
 public class OrderActivity extends BaseActivity implements IOrderACView{
     String TAG="OrderAC";
-    int comId;
-    int sellerId;
+    String comId;
+    String sellerId;
 
     private ImageView orderItemImage;
     private TextView orderItemPrice;
@@ -38,7 +42,7 @@ public class OrderActivity extends BaseActivity implements IOrderACView{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle bundle = getIntent().getExtras();
-        comId=bundle.getInt("comId");
+        comId=bundle.getString("comId");
         Log.d(TAG, "onCreate:comId "+comId);
 
         initView();
@@ -85,15 +89,38 @@ public class OrderActivity extends BaseActivity implements IOrderACView{
 
 
     public void setComMsg(){
-        TBCommodity commodity= LitePal.find(TBCommodity.class,comId);
-        sellerId = commodity.getUserId();
+//        TBCommodity commodity= LitePal.find(TBCommodity.class,comId);
+        BmobQuery<TBCommodity> tbCommodityBmobQuery=new BmobQuery<>();
+        tbCommodityBmobQuery.getObject(comId, new QueryListener<TBCommodity>() {
+            @Override
+            public void done(TBCommodity tbCommodity, BmobException e) {
+                sellerId = tbCommodity.getUserId();
+                BmobQuery<TBUser> tbUserBmobQuery=new BmobQuery<>();
+                tbUserBmobQuery.getObject(sellerId, new QueryListener<TBUser>() {
+                    @Override
+                    public void done(TBUser seller, BmobException e) {
+                        tbUserBmobQuery.getObject(MyApplication.getUserObjectId(), new QueryListener<TBUser>() {
+                            @Override
+                            public void done(TBUser buyer, BmobException e) {
+                                orderItemImage.setImageBitmap(BitmapFactory.decodeByteArray(tbCommodity.getcImage(),0,tbCommodity.getcImage().length));
+                                orderItemTitle.setText(tbCommodity.getcName());
+                                orderItemPrice.setText(tbCommodity.getcPrice());
+                                orderItemSeller.setText(seller.getuName());
+                                buyerTel.setText(buyer.getuTel());
+                            }
+                        });
+                    }
+                });
+            }
+        });
+     /*   sellerId = commodity.getUserId();
         TBUser seller = LitePal.find(TBUser.class, sellerId);
         TBUser buyer=LitePal.find(TBUser.class, MyApplication.getUserId());
         orderItemImage.setImageBitmap(BitmapFactory.decodeByteArray(commodity.getcImage(),0,commodity.getcImage().length));
         orderItemTitle.setText(commodity.getcName());
         orderItemPrice.setText(commodity.getcPrice());
         orderItemSeller.setText(seller.getuName());
-        buyerTel.setText(buyer.getuTel());
+        buyerTel.setText(buyer.getuTel());*/
     }
 
     @Override

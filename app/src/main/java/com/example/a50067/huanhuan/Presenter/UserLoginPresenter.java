@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.example.a50067.huanhuan.Model.IUserLoginModel;
 import com.example.a50067.huanhuan.Model.ModelListener.OnGetURLListener;
+import com.example.a50067.huanhuan.Model.ModelListener.OnQuerySQLListener;
 import com.example.a50067.huanhuan.Model.UserLoginModel;
 import com.example.a50067.huanhuan.MyApplication;
 import com.example.a50067.huanhuan.SQLTable.TBUser;
@@ -16,6 +17,11 @@ import org.litepal.LitePal;
 import org.litepal.crud.LitePalSupport;
 
 import java.util.List;
+
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.QueryListener;
 
 /**
  * Created by 50067 on 2018/5/9.
@@ -87,14 +93,28 @@ public class UserLoginPresenter {
                         * 第一次：创建用户对象，向数据库插入用户信息---------------------------------
                         * 否：不创建对象
                         * */
-                        if(FirstLogin(userLoginView.getUserAccount())){
+                       /* if(FirstLogin(userLoginView.getUserAccount())){
                             //如果第一次登陆为true,跳转到设置界面
                             userLoginView.hideLoading();
                             userLoginView.intentToFirstLoginAC();
 
                         }else {
                             userLoginView.intentToMainAC();
-                        }
+                        }*/
+                       FirstLogin(userLoginView.getUserAccount(), new OnQuerySQLListener() {
+                           @Override
+                           public void querySuccess() {
+                               //不是第一次登陆
+                               userLoginView.intentToMainAC();
+                           }
+
+                           @Override
+                           public void queryFailed() {
+                                //是第一次登陆
+                               userLoginView.hideLoading();
+                               userLoginView.intentToFirstLoginAC();
+                           }
+                       });
 
 
                         Log.d(TAG, "handleMessage:登陆成功 ");
@@ -113,9 +133,10 @@ public class UserLoginPresenter {
             }
         };
     }
-    public Boolean FirstLogin(String account){
+    /*LitePal的版本*/
+   /* public Boolean FirstLogin(String account){
         Log.d(TAG, "FirstLogin: account"+account);
-        /*查询数据库 查找该账号是否存在*/
+        *//*查询数据库 查找该账号是否存在*//*
         List<TBUser> users=LitePal.findAll(TBUser.class);
         for(TBUser u:users){
             if(u.getuAccount().equals(account)){
@@ -127,5 +148,48 @@ public class UserLoginPresenter {
             }
         }
         return true;
+    }*/
+
+    /*Bmob的版本*/
+    public void FirstLogin(String account, OnQuerySQLListener querySQLListener){
+        BmobQuery<TBUser> bmobQuery=new BmobQuery<TBUser>();
+        bmobQuery.addWhereEqualTo("uAccount",account);
+        bmobQuery.findObjects(new FindListener<TBUser>() {
+            @Override
+            public void done(List<TBUser> list, BmobException e) {
+                if(e==null&&list.size()!=0){    //查询成功，不是第一次登陆
+
+//                    Log.d(TAG, "done: e.print "+e.toString());
+//                    Log.d(TAG, "done: 查询成功，不是第一登陆");
+                    Log.d(TAG, "done: list.size "+list.size());
+                    if(list.size()==1){
+                        TBUser tbUser=list.get(0);
+                        Log.d(TAG, "done:  id "+tbUser.getObjectId());
+                        MyApplication.setUserObjectId(tbUser.getObjectId());
+                        MyApplication.setUserAccount(tbUser.getuAccount());
+                    }
+                    querySQLListener.querySuccess();
+                }
+                else {          //查询失败，是第一次登陆
+//                    Log.d(TAG, "done: e.print 2 "+e.toString());
+//                    Log.d(TAG, "done: 查询失败，是第一次登陆"+e.getMessage());
+
+
+                    querySQLListener.queryFailed();
+
+                }
+            }
+        });
+       /* bmobQuery.getObject(account, new QueryListener<TBUser>() {
+            @Override
+            public void done(TBUser tbUser, BmobException e) {
+                if (e==null){
+
+                }   else {
+                    Log.d(TAG, "done: 查询失败，是第一次登陆"+e.getMessage());
+                    querySQLListener.queryFailed();
+                }
+            }
+        });*/
     }
 }

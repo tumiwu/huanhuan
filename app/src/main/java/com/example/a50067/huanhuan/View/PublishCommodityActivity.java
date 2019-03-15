@@ -34,9 +34,13 @@ import com.example.a50067.huanhuan.Presenter.MainFragPresenter;
 import com.example.a50067.huanhuan.Presenter.PublishComPresenter;
 import com.example.a50067.huanhuan.R;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.lang.ref.SoftReference;
 import java.sql.Date;
 
 public class PublishCommodityActivity extends BaseActivity implements IPublishcommodityView{
@@ -233,8 +237,9 @@ public class PublishCommodityActivity extends BaseActivity implements IPublishco
                 if(resultCode==RESULT_OK){
                     try{
                         Bitmap bitmap= BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
-                        imageBitmap=bitmap;
-                        pubComImage.setImageBitmap(bitmap);
+                        Bitmap bitmap1=compressBitmapUri(bitmap);
+                        imageBitmap=bitmap1;
+                        pubComImage.setImageBitmap(bitmap1);
                     }catch (FileNotFoundException e){
                         e.printStackTrace();
                     }
@@ -250,6 +255,20 @@ public class PublishCommodityActivity extends BaseActivity implements IPublishco
         }
     }
 
+    private Bitmap compressBitmapUri(Bitmap bitmap){
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);//质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
+        int options = 100;
+        while (baos.toByteArray().length / 1024 > 100) {  //循环判断如果压缩后图片是否大于100kb,大于继续压缩
+            baos.reset();//重置baos即清空baos
+            //第一个参数 ：图片格式 ，第二个参数： 图片质量，100为最高，0为最差  ，第三个参数：保存压缩后的数据的流
+            bitmap.compress(Bitmap.CompressFormat.JPEG, options, baos);//这里压缩options%，把压缩后的数据存放到baos中
+            options -= 10;//每次都减少10
+        }
+        ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());//把压缩后的数据baos存放到ByteArrayInputStream中
+        Bitmap b = BitmapFactory.decodeStream(isBm, null, null);//把ByteArrayInputStream数据生成图片
+        return b;
+    }
     private void openAlbum(){
         Intent intent=new Intent("android.intent.action.GET_CONTENT");
         intent.setType("image/*");
@@ -291,12 +310,32 @@ public class PublishCommodityActivity extends BaseActivity implements IPublishco
     }
     private void displayImage(String imagePath){
         if(imagePath!=null){
-            Bitmap bitmap=BitmapFactory.decodeFile(imagePath);
+//            Bitmap bitmap=BitmapFactory.decodeFile(imagePath);
+            Bitmap bitmap=compressBitmap(imagePath);
             imageBitmap=bitmap;
             pubComImage.setImageBitmap(bitmap);
         }else {
             toastShort("从相册加载图片失败");
         }
+    }
+
+    private Bitmap compressBitmap(String path){
+        BitmapFactory.Options options=new BitmapFactory.Options();
+        options.inJustDecodeBounds=true;
+        BitmapFactory.decodeFile(path,options);
+        int height=options.outHeight;
+        int width=options.outWidth;
+        int inSampleSize=2;
+        int minLen=Math.min(height,width);
+        if(minLen>100){
+            float ratio=(float)minLen/100.0f;
+            inSampleSize=(int)ratio;
+        }
+        options.inJustDecodeBounds=false;
+        options.inSampleSize=inSampleSize;
+        Bitmap bm=BitmapFactory.decodeFile(path,options);
+        return bm;
+
     }
     private int getZoomScale(File imageFile){
         int scale=1;
@@ -325,5 +364,51 @@ public class PublishCommodityActivity extends BaseActivity implements IPublishco
 
     }
 
+    public static Bitmap byteToBitmap(byte[] imgByte) {
+        InputStream input = null;
+        Bitmap bitmap = null;
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 8;
+        input = new ByteArrayInputStream(imgByte);
+        SoftReference softRef = new SoftReference(BitmapFactory.decodeStream(
+                input, null, options));
+        bitmap = (Bitmap) softRef.get();
+        if (imgByte != null) {
+            imgByte = null;
+        }
 
+        try {
+            if (input != null) {
+                input.close();
+            }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return bitmap;
+    }
+
+    /*public static Bitmap byteToBitmap(byte[] imgByte) {
+        InputStream input = null;
+        Bitmap bitmap = null;
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 8;
+        input = new ByteArrayInputStream(imgByte);
+        SoftReference softRef = new SoftReference(BitmapFactory.decodeStream(
+                input, null, options));
+        bitmap = (Bitmap) softRef.get();
+        if (imgByte != null) {
+            imgByte = null;
+        }
+
+        try {
+            if (input != null) {
+                input.close();
+            }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return bitmap;
+    }*/
 }

@@ -30,6 +30,12 @@ import org.litepal.LitePal;
 
 import java.util.List;
 
+import cn.bmob.v3.Bmob;
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.QueryListener;
+import cn.bmob.v3.listener.SaveListener;
+
 public class CommodityActivity extends BaseActivity implements ICommodityACView{
 
     String TAG="Com AC";
@@ -51,7 +57,7 @@ public class CommodityActivity extends BaseActivity implements ICommodityACView{
     private EditText commentsEdittext;
     private CommodityACPresenter comPresenter;
 
-    private int comId;
+    private String comId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,8 +70,8 @@ public class CommodityActivity extends BaseActivity implements ICommodityACView{
             Log.d(TAG, "onCreate: comId   "+intent.getIntExtra("comId",9999));
         }
 
-        comId=intent.getIntExtra("comId",9999);
-        if(comId==9999){
+        comId=intent.getStringExtra("comId");
+        if(comId==null){
             Log.d(TAG, "onCreate: comId error");
         }else {
             setComAC();
@@ -126,11 +132,21 @@ public class CommodityActivity extends BaseActivity implements ICommodityACView{
                 break;
             case R.id.comAC_user_icon:
 
-                TBCommodity commodity=LitePal.find(TBCommodity.class,comId);
-                String uId=commodity.getUserId()+"";
+//                TBCommodity commodity=LitePal.find(TBCommodity.class,comId);
+                BmobQuery<TBCommodity> tbCommodityBmobQuery=new BmobQuery<>();
+                tbCommodityBmobQuery.getObject(comId, new QueryListener<TBCommodity>() {
+                    @Override
+                    public void done(TBCommodity tbCommodity, BmobException e) {
+                        String uId=tbCommodity.getUserId()+"";
+                        Bundle bundle=new Bundle();
+                        bundle.putString("userId",uId);
+                        openActivity(UserMsgActivity.class,bundle);
+                    }
+                });
+               /* String uId=commodity.getUserId()+"";
                 Bundle bundle=new Bundle();
                 bundle.putString("userId",uId);
-                openActivity(UserMsgActivity.class,bundle);
+                openActivity(UserMsgActivity.class,bundle);*/
                 break;
         }
     }
@@ -147,10 +163,15 @@ public class CommodityActivity extends BaseActivity implements ICommodityACView{
                 tbComComments.setCcomtsContent(comments);
                 tbComComments.setCcomtsType(0);     //回复类型：回复商品
                 tbComComments.setCommodityId(comId);
-                tbComComments.setUserId(MyApplication.getUserId());      //回复者的id
+                tbComComments.setUserId(MyApplication.getUserObjectId());      //回复者的id
 //                tbComComments.setComtsToUserId();     //回复类型为商品，所以回复对象id为空
-                tbComComments.save();
-                Log.d(TAG, "onClick: 回复的内容："+comments);
+                tbComComments.save(new SaveListener<String>() {
+                    @Override
+                    public void done(String s, BmobException e) {
+                        Log.d(TAG, "onClick: 回复的内容："+comments);
+                    }
+                });
+
             }
         });
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -165,8 +186,35 @@ public class CommodityActivity extends BaseActivity implements ICommodityACView{
     }
 
     public void setComAC(){
-        TBCommodity mTBcom=LitePal.find(TBCommodity.class,comId);
-        int uId = mTBcom.getUserId();
+//        TBCommodity mTBcom=LitePal.find(TBCommodity.class,comId);
+
+        BmobQuery<TBCommodity> tbCommodityBmobQuery=new BmobQuery<>();
+        tbCommodityBmobQuery.getObject(comId, new QueryListener<TBCommodity>() {
+            @Override
+            public void done(TBCommodity tbCommodity, BmobException e) {
+                String uId = tbCommodity.getUserId();
+                BmobQuery<TBUser> tbUserBmobQuery=new BmobQuery<>();
+                tbUserBmobQuery.getObject(uId, new QueryListener<TBUser>() {
+                    @Override
+                    public void done(TBUser tbUser, BmobException e) {
+                        ComUserName.setText(tbUser.getuName());
+                        ComUserSchool.setText(tbUser.getuSchool());
+                        if(tbUser.getuIcon()!=null){
+                            ComUserIconImage.setImageBitmap(BitmapFactory.decodeByteArray(tbUser.getuIcon(),0,tbUser.getuIcon().length));     //可能会报错
+                        }
+                        //商品信息
+                        ComImage.setImageBitmap(BitmapFactory.decodeByteArray(tbCommodity.getcImage(),0,tbCommodity.getcImage().length));
+                        ComDate.setText(tbCommodity.getcUploadDate().toString());
+                        ComDetails.setText(tbCommodity.getcDetails());
+                        ComTitle.setText(tbCommodity.getcName());
+                        ComPrice.setText(tbCommodity.getcPrice());
+                        ComExchangeable.setText(tbCommodity.getcExchangeable()==1?getString(R.string.exchange):getString(R.string.noexchange));
+
+                    }
+                });
+            }
+        });
+      /*  int uId = mTBcom.getUserId();
         TBUser user1 = LitePal.find(TBUser.class, uId);
         //用户信息
         ComUserName.setText(user1.getuName());
@@ -181,7 +229,7 @@ public class CommodityActivity extends BaseActivity implements ICommodityACView{
         ComTitle.setText(mTBcom.getcName());
         ComPrice.setText(mTBcom.getcPrice());
         ComExchangeable.setText(mTBcom.getcExchangeable()==1?getString(R.string.exchange):getString(R.string.noexchange));
-
+*/
 
 
     }
@@ -192,9 +240,50 @@ public class CommodityActivity extends BaseActivity implements ICommodityACView{
         * 先用comId找出卖家Id(表项为userId)
         * 再判断是否与当前登录的id相同
         * 如果相同，弹出不能收藏，如果不相同，收藏成功*/
-        TBCommodity commodity=LitePal.find(TBCommodity.class,comId);
-        int uId=commodity.getUserId();
-        switch (click){
+       /* TBCommodity commodity=LitePal.find(TBCommodity.class,comId);
+        int uId=commodity.getUserId();*/
+        BmobQuery<TBCommodity> tbCommodityBmobQuery=new BmobQuery<>();
+        tbCommodityBmobQuery.getObject(comId, new QueryListener<TBCommodity>() {
+            @Override
+            public void done(TBCommodity tbCommodity, BmobException e) {
+                String uId=tbCommodity.getUserId();
+                switch (click){
+                    case R.id.comAC_Iwant_Btn:
+                        if(uId==MyApplication.getUserObjectId()){
+                            toastShort(getString(R.string.comAC_cantBuy));
+                        }else {
+
+                            BmobQuery<TBUser> tbUserBmobQuery=new BmobQuery<>();
+                            tbUserBmobQuery.getObject(MyApplication.getUserObjectId(), new QueryListener<TBUser>() {
+                                @Override
+                                public void done(TBUser tbUser, BmobException e) {
+                                    if(tbUser.getuAddress()==null){       //如果购买前判断地址为空，要先设置
+                                        toastShort(getString(R.string.comAC_dontHaveAD));
+                                    }else {
+                                        Bundle bundle=new Bundle();
+                                        bundle.putString("comId",comId);
+                                        openActivity(OrderActivity.class,bundle);
+                                    }
+                                }
+                            });
+
+
+                        }
+
+                        break;
+                    case R.id.comAC_starCom_Btn:
+                        if(uId==MyApplication.getUserObjectId()){
+                            toastShort(getString(R.string.comAC_cantStar));
+                        }else {
+                            comPresenter.starCom(comId);
+
+                        }
+
+                        break;
+                }
+            }
+        });
+        /*switch (click){
             case R.id.comAC_Iwant_Btn:
                 if(uId==MyApplication.getUserId()){
                     toastShort(getString(R.string.comAC_cantBuy));
@@ -220,7 +309,7 @@ public class CommodityActivity extends BaseActivity implements ICommodityACView{
                 }
 
                 break;
-        }
+        }*/
 
 
 
@@ -238,7 +327,7 @@ public class CommodityActivity extends BaseActivity implements ICommodityACView{
     }
 
     @Override
-    public int getComId() {
+    public String getComId() {
         return comId;
     }
 

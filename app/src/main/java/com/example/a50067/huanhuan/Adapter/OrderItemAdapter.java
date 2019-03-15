@@ -29,6 +29,13 @@ import org.litepal.LitePal;
 
 import java.util.List;
 
+import cn.bmob.v3.Bmob;
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.QueryListener;
+import cn.bmob.v3.listener.UpdateListener;
+
 /**
  * Created by 50067 on 2018/6/16.
  */
@@ -141,12 +148,24 @@ static class ViewHolder extends RecyclerView.ViewHolder{
                 orderBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        TBCommodity commodity = LitePal.find(TBCommodity.class, orderComList.get(position).getcId());
-                        commodity.setcDelete(1);
-                        commodity.save();
-                        orderComList.remove(position);
-                        notifyDataSetChanged();
-                        mComContext.sendBroadcast(new Intent("refresh_recyclerview_data"));
+
+
+
+                        TBCommodity tbCommodity=new TBCommodity();
+                        tbCommodity.setcDelete(1);
+                        tbCommodity.update(orderComList.get(position).getcId(), new UpdateListener() {
+                            @Override
+                            public void done(BmobException e) {
+                                orderComList.remove(position);
+                                notifyDataSetChanged();
+                                mComContext.sendBroadcast(new Intent("refresh_recyclerview_data"));
+                            }
+                        });
+
+//                        TBCommodity commodity = LitePal.find(TBCommodity.class, orderComList.get(position).getcId());
+//                        commodity.setcDelete(1);
+//                        commodity.save();
+
                     }
                 });
                 break;
@@ -163,25 +182,61 @@ static class ViewHolder extends RecyclerView.ViewHolder{
                             public void onClick(DialogInterface dialog, int which) {
                                 switch (which){
                                     case 0:         //点击已完成，按钮内容更改，并且不能按
-                                        Toast.makeText(mComContext,"订单已完成",Toast.LENGTH_SHORT).show();
-                                        String id=orderComList.get(position).getcId()+"";
-                                        List<TBOrder> orderList=LitePal.where("comId=?",id).find(TBOrder.class);
-                                        Log.d(TAG, "onClick: adapter get order size(查询出来应该只有1个)"+orderList.size());
-                                        Log.d(TAG, "onClick: adapter get order 0 "+orderList.get(0));
-                                        TBOrder order=orderList.get(0);
-                                        order.setOrState(1);
-                                        orderBtn.setText("订单已完成");
+
+                                        String id=orderComList.get(position).getcId();
+                                        BmobQuery<TBOrder> orderBmobQuery=new BmobQuery<TBOrder>();
+                                        orderBmobQuery.addWhereEqualTo("comId",id);
+                                        orderBmobQuery.findObjects(new FindListener<TBOrder>() {
+                                            @Override
+                                            public void done(List<TBOrder> list, BmobException e) {
+                                                TBOrder tbOrder=list.get(0);
+                                                tbOrder.setOrState(1);
+                                                tbOrder.update(new UpdateListener() {
+                                                    @Override
+                                                    public void done(BmobException e) {
+                                                        Toast.makeText(mComContext,"订单已完成",Toast.LENGTH_SHORT).show();
+                                                        orderBtn.setText("订单已完成");
+                                                    }
+                                                });
+                                            }
+                                        });
+
+//                                        List<TBOrder> orderList=LitePal.where("comId=?",id).find(TBOrder.class);
+//                                        Log.d(TAG, "onClick: adapter get order size(查询出来应该只有1个)"+orderList.size());
+//                                        Log.d(TAG, "onClick: adapter get order 0 "+orderList.get(0));
+//                                        TBOrder order=orderList.get(0);
+//                                        order.setOrState(1);
+//                                        orderBtn.setText("订单已完成");
 
                                         break;
                                     case 1:
-                                        Toast.makeText(mComContext,"订单已取消",Toast.LENGTH_SHORT).show();
-                                        String id1=orderComList.get(position).getcId()+"";
+                                        String id1=orderComList.get(position).getcId();
+                                        BmobQuery<TBOrder> tbOrderBmobQuery=new BmobQuery<>();
+                                        tbOrderBmobQuery.addWhereEqualTo("comId",id1);
+                                        tbOrderBmobQuery.findObjects(new FindListener<TBOrder>() {
+                                            @Override
+                                            public void done(List<TBOrder> list, BmobException e) {
+                                                TBOrder tbOrder=list.get(0);
+                                                tbOrder.setOrState(2);
+                                                tbOrder.update(new UpdateListener() {
+                                                    @Override
+                                                    public void done(BmobException e) {
+                                                        orderBtn.setText("订单已取消");
+                                                        Toast.makeText(mComContext,"订单已取消",Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+                                            }
+                                        });
+
+                                       /* Toast.makeText(mComContext,"订单已取消",Toast.LENGTH_SHORT).show();
+
+
                                         List<TBOrder> orderList1=LitePal.where("comId=?",id1).find(TBOrder.class);
                                         Log.d(TAG, "onClick: 取消adapter get order size(查询出来应该只有1个)"+orderList1.size());
                                         Log.d(TAG, "onClick:取消 adapter get order 0 "+orderList1.get(0));
                                         TBOrder order1=orderList1.get(0);
-                                        order1.setOrState(1);
-                                        orderBtn.setText("订单已取消");
+                                        order1.setOrState(2);
+                                        orderBtn.setText("订单已取消");*/
                                         break;
                                 }
                             }
@@ -193,32 +248,51 @@ static class ViewHolder extends RecyclerView.ViewHolder{
                 break;
             case 2:
                 //左边增加字：状态栏
-                String id=orderComList.get(position).getcId()+"";
-                List<TBOrder> orderList=LitePal.where("comId=?",id).find(TBOrder.class);
-                TBOrder order=orderList.get(0);
-                switch (order.getOrState()){
-                    case 0:
-                        orderStateText.setText("未完成");
-                        break;
-                    case 1:
-                        orderStateText.setText("已完成");
-                        break;
-                    case 2:
-                        orderStateText.setText("已取消");
-                        break;
-                }
-
-                orderBtn.setText("联系卖家");       //弹出卖家联系方式
-                orderBtn.setOnClickListener(new View.OnClickListener() {
+                String id=orderComList.get(position).getcId();
+                BmobQuery<TBOrder> tbOrderBmobQuery=new BmobQuery<>();
+                tbOrderBmobQuery.addWhereEqualTo("comId",id);
+                tbOrderBmobQuery.findObjects(new FindListener<TBOrder>() {
                     @Override
-                    public void onClick(View v) {
-                        TBUser tbUser=LitePal.find(TBUser.class,order.getSellerId());
-                        AlertDialog.Builder builder=new AlertDialog.Builder(mComContext);
-                        builder.setTitle("买家手机：");
-                        builder.setMessage(tbUser.getuTel());
-                        builder.show();
+                    public void done(List<TBOrder> list, BmobException e) {
+                        TBOrder order=list.get(0);
+                        switch (order.getOrState()){
+                            case 0:
+                                orderStateText.setText("未完成");
+                                break;
+                            case 1:
+                                orderStateText.setText("已完成");
+                                break;
+                            case 2:
+                                orderStateText.setText("已取消");
+                                break;
+                        }
+
+                        orderBtn.setText("联系卖家");       //弹出卖家联系方式
+                        orderBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                BmobQuery<TBUser> tbUserBmobQuery=new BmobQuery<>();
+                                tbUserBmobQuery.getObject(order.getSellerId(), new QueryListener<TBUser>() {
+                                    @Override
+                                    public void done(TBUser tbUser, BmobException e) {
+                                        AlertDialog.Builder builder=new AlertDialog.Builder(mComContext);
+                                        builder.setTitle("买家手机：");
+                                        builder.setMessage(tbUser.getuTel());
+                                        builder.show();
+                                    }
+                                });
+                               /* TBUser tbUser=LitePal.find(TBUser.class,order.getSellerId());
+                                AlertDialog.Builder builder=new AlertDialog.Builder(mComContext);
+                                builder.setTitle("买家手机：");
+                                builder.setMessage(tbUser.getuTel());
+                                builder.show();*/
+                            }
+                        });
                     }
                 });
+//                List<TBOrder> orderList=LitePal.where("comId=?",id).find(TBOrder.class);
+//                TBOrder order=orderList.get(0);
+
                 break;
         }
     }

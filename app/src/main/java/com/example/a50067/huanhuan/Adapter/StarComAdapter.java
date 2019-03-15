@@ -26,11 +26,17 @@ import org.litepal.crud.LitePalSupport;
 
 import java.util.List;
 
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.UpdateListener;
+
 /**
  * Created by 50067 on 2018/6/11.
  */
 
 public class StarComAdapter extends RecyclerView.Adapter<StarComAdapter.ViewHolder> {
+    private static final String TAG = "StarComAdapter";
     private List<Commodity> starComList;
     private Context mComContext;
     public StarComAdapter(List<Commodity> starComList, Context context) {
@@ -72,11 +78,34 @@ public class StarComAdapter extends RecyclerView.Adapter<StarComAdapter.ViewHold
 
                         //通过starCom获取id,TBStar设置删除标记为1
                         /*这里错了*/
-                        TBStar tbStar = new TBStar();
-                        tbStar.setStarDelete(1);
-                        tbStar.updateAll("userId = ? and commodityId = ?", MyApplication.getUserId() + "", starCom.getcId() + "");
+                        BmobQuery<TBStar> tbStarBmobQuery=new BmobQuery<>();
+                        tbStarBmobQuery.addWhereEqualTo("cId",starCom.getcId());
+                        tbStarBmobQuery.addWhereEqualTo("userId",MyApplication.getUserObjectId());
+                        tbStarBmobQuery.findObjects(new FindListener<TBStar>() {
+                            @Override
+                            public void done(List<TBStar> list, BmobException e) {
+                            //  一个商品只能被同一人收藏一次，所以搜索出List.size为1
+                            if(list.size()==1){
+                                TBStar tbStar = new TBStar();
+                                tbStar=list.get(0);
+                                tbStar.setStarDelete(1);
+                                tbStar.update(new UpdateListener() {
+                                    @Override
+                                    public void done(BmobException e) {
+                                        removeStarCom(position);
+                                    }
+                                });
 
-                        removeStarCom(position);
+                            }   else {
+                                Log.d(TAG, "done: 搜索出来的List不止1个，错误size "+list.size());
+                            } 
+                            }
+                        });
+//                        TBStar tbStar = new TBStar();
+//                        tbStar.setStarDelete(1);
+//                        tbStar.updateAll("userId = ? and commodityId = ?", MyApplication.getUserId() + "", starCom.getcId() + "");
+
+
 
                     });
 
@@ -92,8 +121,8 @@ public class StarComAdapter extends RecyclerView.Adapter<StarComAdapter.ViewHold
             int position=holder.getAdapterPosition();
             Commodity commodity=starComList.get(position);
             Log.d("ComAdapter", "onClick: "+position);
-                /*
-                * 点击获取position的对象，获取对象属性的id值，跳转到AC,通过Id填充*/
+            /*
+             * 点击获取position的对象，获取对象属性的id值，跳转到AC,通过Id填充*/
             Intent intent=new Intent(mComContext, CommodityActivity.class);
             intent.putExtra("comId",commodity.getcId()); //传递id值
             mComContext.startActivity(intent);

@@ -7,5 +7,5 @@ import com.example.a50067.huanhuan.Model.ModelListener.OnInsertSQLListener;
  */
 
 public interface ICommodityACModel {
-    void modelStarCom(int comId, OnInsertSQLListener listener);
+    void modelStarCom(String comId, OnInsertSQLListener listener);
 }

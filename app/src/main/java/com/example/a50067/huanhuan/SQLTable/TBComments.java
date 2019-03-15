@@ -2,11 +2,13 @@ package com.example.a50067.huanhuan.SQLTable;
 
 import org.litepal.crud.LitePalSupport;
 
+import cn.bmob.v3.BmobObject;
+
 /**
  * Created by 50067 on 2018/6/14.
  */
 
-public class TBComments  extends LitePalSupport {   //针对订单的评论
+public class TBComments  extends BmobObject {   //针对订单的评论
     private int id;
     private int sellerId;
     private int buyerId;
@@ -14,13 +16,6 @@ public class TBComments  extends LitePalSupport {   //针对订单的评论
     private int orderId;
     private String comtsContent;
     private int comtsDelete;
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public int getBuyerId() {
         return buyerId;

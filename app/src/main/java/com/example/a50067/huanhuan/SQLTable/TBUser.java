@@ -2,12 +2,13 @@ package com.example.a50067.huanhuan.SQLTable;
 
 import org.litepal.crud.LitePalSupport;
 
+import cn.bmob.v3.BmobObject;
+
 /**
  * Created by 50067 on 2018/6/14.
  */
 
-public class TBUser extends LitePalSupport {
-    private int id;
+public class TBUser extends BmobObject {
     private String uName;
     private byte[] uIcon;
     private String uAccount;
@@ -16,14 +17,6 @@ public class TBUser extends LitePalSupport {
     private String uTel;
     private String uAddress;
     private int uDelete;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getuAddress() {
         return uAddress;

@@ -25,8 +25,13 @@ import org.litepal.LitePal;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PersonnalOrdersActivity extends BaseActivity{
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.QueryListener;
 
+public class PersonnalOrdersActivity extends BaseActivity{
+    private static final String TAG = "PersonnalOrdersActivity";
     int position;
     RecyclerView recView;
     private Toolbar toolbar;
@@ -40,7 +45,20 @@ public class PersonnalOrdersActivity extends BaseActivity{
         super.onCreate(savedInstanceState);
         initView();
         initListener();
-        user=LitePal.find(TBUser.class,MyApplication.getUserId());
+        BmobQuery<TBUser> tbUserBmobQuery=new BmobQuery<>();
+        Log.d(TAG, "onCreate: objectid : "+MyApplication.getUserObjectId());
+        tbUserBmobQuery.getObject(MyApplication.getUserObjectId(), new QueryListener<TBUser>() {
+            @Override
+            public void done(TBUser tbUser, BmobException e) {
+
+                if(e==null){
+                    user=tbUser;
+                }else {
+                    Log.d(TAG, "done: e :"+e.toString());
+                }
+//                user=tbUser;
+            }
+        });
         Intent intent=getIntent();
         position=intent.getIntExtra("position",999999);
         if(position==999999){
@@ -84,20 +102,68 @@ public class PersonnalOrdersActivity extends BaseActivity{
             case 0:                     //我的发布 (查询commodity,userId为自己)
                 commodityList.clear();
                 toolbar.setTitle(getString(R.string.personnal_publish));
-                List<TBCommodity> comList=LitePal.findAll(TBCommodity.class);
+                BmobQuery<TBCommodity> tbCommodityBmobQuery=new BmobQuery<>();
+                tbCommodityBmobQuery.addWhereEqualTo("userId",MyApplication.getUserObjectId());
+                tbCommodityBmobQuery.findObjects(new FindListener<TBCommodity>() {
+                    @Override
+                    public void done(List<TBCommodity> list, BmobException e) {
+
+                        if(e==null&&list.size()!=0){    //如果查询结果不为空
+
+                            for(TBCommodity com:list){
+                                if(com.getcDelete()!=1) {
+                                    Commodity c = new Commodity("", com.getcImage(), com.getcPrice(), com.getcName());
+                                    commodityList.add(c);
+                                }
+
+                            }
+                        }
+                        else {
+                        }
+                        commodityAdapter=new OrderItemAdapter(commodityList,PersonnalOrdersActivity.this,position);
+                        recView.setAdapter(commodityAdapter);
+                    }
+
+                });
+
+               /* List<TBCommodity> comList=LitePal.findAll(TBCommodity.class);
                 for(TBCommodity com:comList){
                     if(com.getUserId()==MyApplication.getUserId()){
                         if(com.getcDelete()!=1) {
-                            Commodity c = new Commodity(com.getId(), com.getcImage(), com.getcPrice(), user.getuName(), com.getcName());
+                            Commodity c = new Commodity(com.getId(), com.getcImage(), com.getcPrice(), com.getcName());
                             commodityList.add(c);
                         }
                     }
-                }
+                }*/
                 break;
             case 1:                     //我卖出的 (查询order,sellerId为自己)
                 commodityList.clear();
                 toolbar.setTitle(getString(R.string.personnal_sold));
-                List<TBOrder> orderList=LitePal.findAll(TBOrder.class);
+                BmobQuery<TBOrder> tbOrderBmobQuery=new BmobQuery<>();
+                tbOrderBmobQuery.addWhereEqualTo("sellerId",MyApplication.getUserObjectId());
+                tbOrderBmobQuery.findObjects(new FindListener<TBOrder>() {
+                    @Override
+                    public void done(List<TBOrder> list, BmobException e) {
+                        if(e==null&&list.size()!=0){
+                            for(TBOrder tbOrder:list){
+
+                                String comId=tbOrder.getComId();
+                                BmobQuery<TBCommodity> tbCommodityBmobQuery1=new BmobQuery<>();
+                                tbCommodityBmobQuery1.getObject(comId, new QueryListener<TBCommodity>() {
+                                    @Override
+                                    public void done(TBCommodity commodity, BmobException e) {
+                                        Commodity c=new Commodity(commodity.getObjectId(),commodity.getcImage(),commodity.getcPrice(),commodity.getcName());
+                                        commodityList.add(c);
+                                    }
+                                });
+
+                            }
+                        }
+                        commodityAdapter=new OrderItemAdapter(commodityList,PersonnalOrdersActivity.this,position);
+                        recView.setAdapter(commodityAdapter);
+                    }
+                });
+               /* List<TBOrder> orderList=LitePal.findAll(TBOrder.class);
                 for(TBOrder tbOrder:orderList){
                     if(tbOrder.getSellerId()==MyApplication.getUserId()){
                         int comId=tbOrder.getComId();
@@ -105,12 +171,37 @@ public class PersonnalOrdersActivity extends BaseActivity{
                         Commodity c=new Commodity(commodity.getId(),commodity.getcImage(),commodity.getcPrice(),user.getuName(),commodity.getcName());
                         commodityList.add(c);
                     }
-                }
+                }*/
                 break;
             case 2:                     //我买到的  (查询order,buyerId为自己)
                 commodityList.clear();
                 toolbar.setTitle(getString(R.string.personnal_bought));
-                List<TBOrder> orderList2=LitePal.findAll(TBOrder.class);
+                BmobQuery<TBOrder> tbOrderBmobQuery1=new BmobQuery<>();
+                tbOrderBmobQuery1.addWhereEqualTo("buyerId",MyApplication.getUserObjectId());
+                tbOrderBmobQuery1.findObjects(new FindListener<TBOrder>() {
+                    @Override
+                    public void done(List<TBOrder> list, BmobException e) {
+                        if(e==null&&list.size()!=0){
+                            for(TBOrder tbOrder:list){
+                                String comId=tbOrder.getComId();
+                                BmobQuery<TBCommodity> commodityBmobQuery=new BmobQuery<>();
+                                commodityBmobQuery.getObject(comId, new QueryListener<TBCommodity>() {
+                                    @Override
+                                    public void done(TBCommodity commodity, BmobException e) {
+                                        Commodity c=new Commodity(commodity.getObjectId(),commodity.getcImage(),commodity.getcPrice(),commodity.getcName());
+                                        commodityList.add(c);
+                                    }
+                                });
+                                ;
+
+                            }
+                        }
+                        commodityAdapter=new OrderItemAdapter(commodityList,PersonnalOrdersActivity.this,position);
+                        recView.setAdapter(commodityAdapter);
+                    }
+                });
+
+                /*List<TBOrder> orderList2=LitePal.findAll(TBOrder.class);
                 for(TBOrder tbOrder:orderList2){
                     if(tbOrder.getBuyerId()==MyApplication.getUserId()){
                         int comId=tbOrder.getComId();
@@ -118,15 +209,11 @@ public class PersonnalOrdersActivity extends BaseActivity{
                         Commodity c=new Commodity(commodity.getId(),commodity.getcImage(),commodity.getcPrice(),user.getuName(),commodity.getcName());
                         commodityList.add(c);
                     }
-                }
+                }*/
                 break;
 
             case 3:
                 break;
         }
-
-        commodityAdapter=new OrderItemAdapter(commodityList,this,position);
-        recView.setAdapter(commodityAdapter);
-        //commodityAdapter.notifyDataSetChanged();
     }
 }

@@ -19,6 +19,9 @@ import com.example.a50067.huanhuan.SQLTable.TBUser;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.SaveListener;
+
 public class FirstLoginActivity extends BaseActivity implements IFirstLoginView{
     private EditText mUserName;
     private EditText mUserTel;
@@ -77,11 +80,24 @@ public class FirstLoginActivity extends BaseActivity implements IFirstLoginView{
                         user.setuName(getUName());
                         user.setuSchool(getUSchool());
                         user.setuTel(getUTel());
-                        user.save();
+                        Log.d(TAG, "done: come to here 0");
+                        user.save(new SaveListener<String>() {
+                            @Override
+                            public void done(String s, BmobException e) {
+//                                MyApplication.setUserId(user.getId());
+                                if(e!=null){
+                                    Log.d(TAG, "done: bmobexception e : "+e.toString());
+                                }else { //第一次登陆设置APPLICATION信息
+                                    openActivity(MainActivity.class);
+                                    FirstLoginActivity.this.finish();
+                                    MyApplication.setUserObjectId(user.getObjectId());
+                                    MyApplication.setUserAccount(bundle.getString("user_account"));
+                                }
+
+                            }
+                        });
                         //向数据库插入账号，登陆，保存Id
-                        MyApplication.setUserId(user.getId());
-                        openActivity(MainActivity.class);
-                        this.finish();
+
                     }
                     break;
             }

@@ -1,16 +1,13 @@
 package com.example.a50067.huanhuan.Fragment;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.TextView;
 
 import com.example.a50067.huanhuan.Adapter.CommodityAdapter;
 import com.example.a50067.huanhuan.Adapter.StarComAdapter;
