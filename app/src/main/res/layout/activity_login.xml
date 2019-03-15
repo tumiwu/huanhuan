@@ -113,7 +113,7 @@
         android:layout_weight="1"
         android:layout_height="wrap_content" />
 </LinearLayout>
-                    <LinearLayout
+<!--                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
@@ -123,7 +123,7 @@
                             android:layoutDirection="rtl"
                             android:gravity="right|center_vertical"
                             android:text="@string/remember_password"/>
-                    </LinearLayout>
+                    </LinearLayout>-->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

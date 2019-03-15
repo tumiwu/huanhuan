@@ -32,6 +32,8 @@ import cn.bmob.v3.listener.QueryListener;
 public class StarFragModel implements IStarFragModel{
     private String TAG="STAR frag model";
     List<Commodity> starComList;
+
+    List<TBStar> starList=new ArrayList<>();
     int i=0;
 //    @Override
 //    public void getStarComRecViewData(OnSwipeRefreshLayoutListener listener) {
@@ -72,19 +74,23 @@ public class StarFragModel implements IStarFragModel{
 
         starComList=new ArrayList<>();
         BmobQuery<TBStar> tbStarBmobQuery=new BmobQuery<>();
+        BmobQuery<TBCommodity> tbCommodityBmobQuery=new BmobQuery<>();
         tbStarBmobQuery.addWhereEqualTo("userId",MyApplication.getUserObjectId());  //TBSTAR中,收藏者ID是自己的才展示
+        tbStarBmobQuery.addWhereEqualTo("starDelete",0);
         tbStarBmobQuery.findObjects(new FindListener<TBStar>(){
             @Override
             public void done(List<TBStar> list, BmobException e) {
-                BmobQuery<TBCommodity> tbCommodityBmobQuery=new BmobQuery<>();
+
                 if(e==null&&list.size()!=0){
                     for (TBStar star:list ) {
 
+                        Log.d(TAG, "done: star.get com id "+star.getCommodityId());
                         tbCommodityBmobQuery.getObject(star.getCommodityId(), new QueryListener<TBCommodity>() {
                             @Override
                             public void done(TBCommodity tbCommodity, BmobException e) {
 //                                Commodity com = new Commodity(tbCommodity.getObjectId(), tbCommodity.getcImage(), tbCommodity.getcPrice(), tbCommodity.getcName());
                                 Commodity com1=new Commodity();
+                                Log.d(TAG, "done: star.get com id 2 : "+tbCommodity.getObjectId());
                                 com1.setcId(tbCommodity.getObjectId());
                                 com1.setcImage(tbCommodity.getcImage());
                                 com1.setcPrice(tbCommodity.getcPrice());
@@ -97,7 +103,10 @@ public class StarFragModel implements IStarFragModel{
                                             Log.d(TAG, "done: tbuser username " + tbUser.getuName());
                                             com1.setUserName(tbUser.getuName());
                                             starComList.add(com1);
-                                            listener.refreshSuccess(starComList);
+                                            if(list.size()==starComList.size()){
+                                                listener.refreshSuccess(starComList);
+                                            }
+
                                         }
                                     }
                                 });

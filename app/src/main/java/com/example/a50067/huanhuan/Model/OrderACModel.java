@@ -29,7 +29,6 @@ public class OrderACModel implements IOrderACModel {
         order.setSellerId(sellerId);
         order.setOrState(0);        //订单状态 0：默认（未完成）1:已完成 2:被取消
         order.setOrEstablishDate(date);
-        order.setOrDelete(1);       //下订单后先设置删除标记！
         order.save(new SaveListener<String>() {
             @Override
             public void done(String s, BmobException e) {

@@ -21,7 +21,6 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         context=getApplicationContext();
-//        LitePal.initialize(context);
         Bmob.initialize(this, "76d62b1b485b08e64a3ef4db16af7893");
     }
     public static Context getContext(){
@@ -35,8 +34,6 @@ public class MyApplication extends Application {
     public static void setUserObjectId(String userObjectId) {
         UserObjectId = userObjectId;
     }
-
-
 
     public static String getUserAccount() {
         return userAccount;

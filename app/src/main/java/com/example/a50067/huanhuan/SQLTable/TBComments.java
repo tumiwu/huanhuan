@@ -9,43 +9,42 @@ import cn.bmob.v3.BmobObject;
  */
 
 public class TBComments  extends BmobObject {   //针对订单的评论
-    private int id;
-    private int sellerId;
-    private int buyerId;
-    private int commodityId;
-    private int orderId;
+    private String sellerId;
+    private String buyerId;
+    private String commodityId;
+    private String orderId;
     private String comtsContent;
     private int comtsDelete;
 
-    public int getBuyerId() {
-        return buyerId;
-    }
-
-    public void setBuyerId(int buyerId) {
-        this.buyerId = buyerId;
-    }
-
-    public int getSellerId() {
+    public String getSellerId() {
         return sellerId;
     }
 
-    public void setSellerId(int sellerId) {
+    public void setSellerId(String sellerId) {
         this.sellerId = sellerId;
     }
 
-    public int getCommodityId() {
+    public String getBuyerId() {
+        return buyerId;
+    }
+
+    public void setBuyerId(String buyerId) {
+        this.buyerId = buyerId;
+    }
+
+    public String getCommodityId() {
         return commodityId;
     }
 
-    public void setCommodityId(int commodityId) {
+    public void setCommodityId(String commodityId) {
         this.commodityId = commodityId;
     }
 
-    public int getOrderId() {
+    public String getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(int orderId) {
+    public void setOrderId(String orderId) {
         this.orderId = orderId;
     }
 

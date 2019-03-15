@@ -79,25 +79,26 @@ public class StarComAdapter extends RecyclerView.Adapter<StarComAdapter.ViewHold
                         //通过starCom获取id,TBStar设置删除标记为1
                         /*这里错了*/
                         BmobQuery<TBStar> tbStarBmobQuery=new BmobQuery<>();
-                        tbStarBmobQuery.addWhereEqualTo("cId",starCom.getcId());
+                        tbStarBmobQuery.addWhereEqualTo("starDelete",0);
+                        tbStarBmobQuery.addWhereEqualTo("commodityId",starCom.getcId());
                         tbStarBmobQuery.addWhereEqualTo("userId",MyApplication.getUserObjectId());
                         tbStarBmobQuery.findObjects(new FindListener<TBStar>() {
                             @Override
                             public void done(List<TBStar> list, BmobException e) {
                             //  一个商品只能被同一人收藏一次，所以搜索出List.size为1
-                            if(list.size()==1){
+                            if(e==null){
                                 TBStar tbStar = new TBStar();
                                 tbStar=list.get(0);
                                 tbStar.setStarDelete(1);
                                 tbStar.update(new UpdateListener() {
                                     @Override
                                     public void done(BmobException e) {
-                                        removeStarCom(position);
+                                      removeStarCom(position);
                                     }
                                 });
 
                             }   else {
-                                Log.d(TAG, "done: 搜索出来的List不止1个，错误size "+list.size());
+
                             } 
                             }
                         });

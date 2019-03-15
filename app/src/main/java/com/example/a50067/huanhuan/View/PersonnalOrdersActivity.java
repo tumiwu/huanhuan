@@ -112,16 +112,17 @@ public class PersonnalOrdersActivity extends BaseActivity{
 
                             for(TBCommodity com:list){
                                 if(com.getcDelete()!=1) {
-                                    Commodity c = new Commodity("", com.getcImage(), com.getcPrice(), com.getcName());
+                                    Commodity c = new Commodity(com.getObjectId(), com.getcImage(), com.getcPrice(), com.getcName());
                                     commodityList.add(c);
                                 }
 
                             }
+                            commodityAdapter=new OrderItemAdapter(commodityList,PersonnalOrdersActivity.this,position);
+                            recView.setAdapter(commodityAdapter);
                         }
                         else {
                         }
-                        commodityAdapter=new OrderItemAdapter(commodityList,PersonnalOrdersActivity.this,position);
-                        recView.setAdapter(commodityAdapter);
+
                     }
 
                 });
@@ -151,16 +152,18 @@ public class PersonnalOrdersActivity extends BaseActivity{
                                 BmobQuery<TBCommodity> tbCommodityBmobQuery1=new BmobQuery<>();
                                 tbCommodityBmobQuery1.getObject(comId, new QueryListener<TBCommodity>() {
                                     @Override
-                                    public void done(TBCommodity commodity, BmobException e) {
-                                        Commodity c=new Commodity(commodity.getObjectId(),commodity.getcImage(),commodity.getcPrice(),commodity.getcName());
+                                    public void done(TBCommodity com, BmobException e) {
+//                                        Commodity c=new Commodity(commodity.getObjectId(),commodity.getcImage(),commodity.getcPrice(),commodity.getcName());
+                                        Commodity c = new Commodity(com.getObjectId(), com.getcImage(), com.getcPrice(), com.getcName());
                                         commodityList.add(c);
                                     }
                                 });
 
                             }
+                            commodityAdapter=new OrderItemAdapter(commodityList,PersonnalOrdersActivity.this,position);
+                            recView.setAdapter(commodityAdapter);
                         }
-                        commodityAdapter=new OrderItemAdapter(commodityList,PersonnalOrdersActivity.this,position);
-                        recView.setAdapter(commodityAdapter);
+
                     }
                 });
                /* List<TBOrder> orderList=LitePal.findAll(TBOrder.class);
@@ -192,12 +195,15 @@ public class PersonnalOrdersActivity extends BaseActivity{
                                         commodityList.add(c);
                                     }
                                 });
-                                ;
+
 
                             }
+                            Log.d(TAG, "done: order size list +"+list.size());
+                            Log.d(TAG, "done: order size "+commodityList.size());
+                            commodityAdapter=new OrderItemAdapter(commodityList,PersonnalOrdersActivity.this,position);
+                            recView.setAdapter(commodityAdapter);
                         }
-                        commodityAdapter=new OrderItemAdapter(commodityList,PersonnalOrdersActivity.this,position);
-                        recView.setAdapter(commodityAdapter);
+
                     }
                 });
 
